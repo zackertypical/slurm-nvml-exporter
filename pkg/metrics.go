@@ -1,0 +1,48 @@
+package collector
+
+type MetricName string
+
+const (
+	namespace = "nvml"
+
+	// GPULabelName
+	LabelGPU       = "gpu"
+	LabelUUID      = "UUID"
+	LabelDevice    = "device"
+	LabelModelName = "modelName"
+	LabelHostName  = "Hostname"
+
+	LabelPID      = "pid"
+	LabelProcName = "procName"
+	LabelUser     = "user"
+)
+
+type GPUMetric struct {
+	MetricName string `json:"metricName"`
+	Value      string `json:"value"`
+
+	GPU          string `json:"gpu"`       // gpu="0"
+	GPUUUID      string `json:"UUID"`      // UUID="GPU-47714d7a-7dd8-85ee-257f-cadb1e858710"
+	GPUDevice    string `json:"device"`    // device="nvidia0"
+	GPUModelName string `json:"modelName"` // modelName="NVIDIA A100-PCIE-40GB"
+	Hostname     string `json:"Hostname"`  // Hostname="inspur-gpu-03"
+
+	Labels map[string]string
+}
+
+type ProcessMetric struct {
+	MetricName string `json:"metricName"`
+	Value      string `json:"value"`
+
+	PID         string `json:"pid"`      // pid="12355"
+	GPUIndex    string `json:"gpu"`      // gpu="0"
+	HostName    string `json:"HostName"` // Hostname="inspur-gpu-03"
+	ProcessName string `json:"procName"` // procName="python3"
+	User        string `json:"user"`
+
+	Labels map[string]string
+}
+
+var (
+	GPULabels = []string{LabelGPU, LabelUUID, LabelDevice, LabelModelName, LabelHostName}
+)
