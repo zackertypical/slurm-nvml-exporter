@@ -99,11 +99,51 @@ func convertProcStatToMetric(metricName MetricName, desc *prometheus.Desc, ps Pr
 			float64(ps.CPUMemoryUsed),
 			psLabelValues(ps)...,
 		)
-	
+	case MetricProcessGPUMemoryUsed:
+		return prometheus.MustNewConstMetric(
+			desc,
+			prometheus.GaugeValue,
+			float64(ps.GPUMemoryUsed),
+			psLabelValues(ps)...,
+		)
+	case MetricProcessSmUtil:
+		return prometheus.MustNewConstMetric(
+			desc,
+			prometheus.GaugeValue,
+			float64(ps.Smutil),
+			psLabelValues(ps)...,
+		)
+	case MetricProcessGPUMemoryUtil:
+		return prometheus.MustNewConstMetric(
+			desc,
+			prometheus.GaugeValue,
+			float64(ps.Memutil),
+			psLabelValues(ps)...,
+		)
+	case MetricProcessFrameMemUtil:
+		return prometheus.MustNewConstMetric(
+			desc,
+			prometheus.GaugeValue,
+			float64(ps.FrameMemUtil),
+			psLabelValues(ps)...,
+		)
+	case MetricProcessDecodeUtil:
+		return prometheus.MustNewConstMetric(
+			desc,
+			prometheus.GaugeValue,
+			float64(ps.Decutil),
+			psLabelValues(ps)...,
+		)
+	case MetricProcessEncodeUtil:
+		return prometheus.MustNewConstMetric(
+			desc,
+			prometheus.GaugeValue,
+			float64(ps.Encutil),
+			psLabelValues(ps)...,
+		)
 	default:
 		return nil
 	}
-
 }
 
 // 	ProcessLabels = []string{LabelGPU, LabelPID, LabelProcName, LabelUser}
