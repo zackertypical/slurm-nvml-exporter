@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/NVIDIA/go-nvml v0.12.0-1
+	github.com/gorilla/mux v1.8.0
 	github.com/prometheus/client_golang v1.15.1
 	github.com/shirou/gopsutil v2.21.11+incompatible
 	github.com/sirupsen/logrus v1.9.3

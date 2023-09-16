@@ -143,3 +143,12 @@ func (c *NVMLCache) GetGPUStats() []GPUStat {
 	c.Unlock()
 	return snapshot
 }
+
+func (c *NVMLCache) GetGPUInfos() []GPUInfo {
+	snapshot := make([]GPUInfo, c.DeviceCount)
+
+	for i, d := range c.DeviceInfos {
+		snapshot[i] = d.GPUInfo
+	}
+	return snapshot
+}

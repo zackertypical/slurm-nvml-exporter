@@ -30,20 +30,16 @@ type Config struct {
 type GPUDevice struct {
 	nvml.Device
 
-	UUID             string
-	GPUModelName     string
-	GPUIndex         uint
-	Attributes       nvml.DeviceAttributes
-	PcieLinkMaxSpeed uint32
+	GPUInfo
 }
 
 // todo: add GPUInfo
 type GPUInfo struct {
-	UUID             string
-	GPUModelName     string
-	GPUIndex         uint
-	Attributes       nvml.DeviceAttributes
-	PcieLinkMaxSpeed uint32
+	UUID             string                `json:"UUID"`
+	GPUModelName     string                `json:"modelName"`
+	GPUIndex         uint                  `json:"gpuIndex"`
+	Attributes       nvml.DeviceAttributes `json:"attributes"`
+	PcieLinkMaxSpeed uint32                `json:"pcieLinkMaxSpeed"`
 }
 
 type ProcessStat struct {

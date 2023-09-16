@@ -4,8 +4,11 @@ import (
 	"flag"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 
-	collector "github.com/nvml-exporter/pkg"
+	"github.com/nvml-exporter/pkg/collector"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
@@ -29,9 +32,8 @@ func main() {
 		logrus.Errorf("Unable to get hostname: %v", err)
 		hostname = ""
 	}
-	// todo: add signal & nvml shutdown
 
-	// todo: configuration file
+	// setup config
 	config := &collector.Config{
 		CollectorsFile:  *metricConfigFile,
 		ExporterPort:    *exporter_port,
@@ -41,15 +43,20 @@ func main() {
 		// SupportedMetrics []string,
 		HostName: hostname,
 	}
+	// setup signals
+	stop := make(chan interface{})
+	sigs := newOSWatcher(syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGHUP)
 
+	// run nvml cache
 	nvmlCache, err := collector.NewNVMLCache(config)
 	if err != nil {
 		logrus.Fatalf("Failed to init nvml, err: %v", err)
 		os.Exit(1)
 	}
 
-	// go nvmlCache.Run()
+	go nvmlCache.Run(stop)
 
+	// setup collectors
 	procCollector := collector.NewProcessCollector(config, nvmlCache)
 	gpuCollector := collector.NewGPUCollector(config, nvmlCache)
 
@@ -57,6 +64,22 @@ func main() {
 
 	registry.MustRegister(procCollector, gpuCollector)
 
-	// Serve on all paths under addr
+	// start listening exporter server
+	// todo: stop chan and server
 	logrus.Fatalf("ListenAndServe error: %v", http.ListenAndServe(*exporter_port, promhttp.HandlerFor(registry, promhttp.HandlerOpts{})))
+
+	for {
+		select {
+		case sig := <-sigs:
+			close(stop)
+			logrus.Infof("Receive sig: %v, Shutting down exporter...", sig)
+		}
+	}
+}
+
+func newOSWatcher(sigs ...os.Signal) chan os.Signal {
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, sigs...)
+
+	return sigChan
 }
