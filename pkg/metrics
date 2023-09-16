@@ -17,6 +17,31 @@ const (
 	LabelUser     = "user"
 )
 
+type Counter struct {
+	FieldName string
+	PromType  string
+	Help      string
+}
+
+type Metric struct {
+	Counter *Counter
+	Value   string
+
+	GPU          string
+	GPUUUID      string
+	GPUDevice    string
+	GPUModelName string
+
+	UUID string
+
+	MigProfile    string
+	GPUInstanceID string
+	Hostname      string
+
+	Labels     *map[string]string
+	Attributes map[string]string
+}
+
 type GPUMetric struct {
 	MetricName string `json:"metricName"`
 	Value      string `json:"value"`
@@ -45,4 +70,9 @@ type ProcessMetric struct {
 
 var (
 	GPULabels = []string{LabelGPU, LabelUUID, LabelDevice, LabelModelName, LabelHostName}
+)
+
+
+var (
+	
 )

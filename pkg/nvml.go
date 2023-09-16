@@ -28,6 +28,7 @@ import (
 
 type NVMLCache struct {
 	sync.RWMutex
+	DeviceCount  uint
 	DeviceInfos  []GPUDevice
 	GPUStats     []GPUStat
 	ProcessStats map[uint]ProcessStat
@@ -41,7 +42,7 @@ func NewNVMLCache(config *Config) (*NVMLCache, error) {
 	ret := nvml.Init()
 
 	if ret != nvml.SUCCESS {
-		log.Fatalf("Unable to shutdown NVML: %v", nvml.ErrorString(ret))
+		log.Fatalf("Unable to init NVML: %v", nvml.ErrorString(ret))
 	}
 
 	// hostName
@@ -76,6 +77,7 @@ func NewNVMLCache(config *Config) (*NVMLCache, error) {
 
 	cache := &NVMLCache{
 		DeviceInfos:  deviceInfos,
+		DeviceCount:  uint(count),
 		GPUStats:     make([]GPUStat, count),
 		ProcessStats: make(map[uint]ProcessStat),
 		Hostname:     hostname,
@@ -106,15 +108,45 @@ func (c *NVMLCache) Run(stop chan interface{}) {
 
 func (c *NVMLCache) udpateCache() error {
 
-	// todo: update GPUStats & ProcessStats
+	start := time.Now()
+	newProcStat := make(map[uint]ProcessStat)
+	newGPUStat := make([]GPUStat, c.DeviceCount)
+	for i, devcie := range c.DeviceInfos {
+		// 更新GPUStat
+		newGPUStat[i] = devcie.DeviceGetGPUStat()
+		// 更新ProcStat
+		psStats := devcie.GetProcessStat(c.config.UseSlurm)
+		for _, ps := range psStats {
+			newProcStat[uint(ps.Pid)] = ps
+		}
+
+	}
+
+	c.Lock()
+	c.GPUStats = newGPUStat
+	c.ProcessStats = newProcStat
+	c.Unlock()
+	logrus.Debugf("udpate nvml cache time: %v", time.Since(start))
 	return nil
 }
 
+// get cache snapshot
 func (c *NVMLCache) GetProcessStats() map[uint]ProcessStat {
 	snapshot := make(map[uint]ProcessStat)
 	c.Lock()
 	for pid, stat := range c.ProcessStats {
 		snapshot[pid] = stat
+	}
+	c.Unlock()
+	return snapshot
+}
+
+// get cache snapshot
+func (c *NVMLCache) GetGPUStats() []GPUStat {
+	snapshot := make([]GPUStat, c.DeviceCount)
+	c.Lock()
+	for i, stat := range c.GPUStats {
+		snapshot[i] = stat
 	}
 	c.Unlock()
 	return snapshot

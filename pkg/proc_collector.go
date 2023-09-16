@@ -6,60 +6,69 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-const (
-	// MetricName
-	MetricProcessCPUPercent    MetricName = "process_cpu_precent"
-	MetricProcessCPUMemoryUsed MetricName = "process_cpu_mem_used"
-	MetricProcessGPUMemoryUsed MetricName = "process_gpu_mem_used"
-	MetricProcessSmUtil        MetricName = "process_gpu_sm_util"
-	MetricProcessGPUMemoryUtil MetricName = "process_gpu_mem_util"
-	MetricProcessFrameMemUtil  MetricName = "process_gpu_frame_mem_util"
-	MetricProcessDecodeUtil    MetricName = "process_gpu_decode_util"
-	MetricProcessEncodeUtil    MetricName = "process_gpu_encode_util"
-)
-
 var (
-	ProcessLabels               = []string{LabelGPU, LabelPID, LabelProcName, LabelUser}
-	SupportedProcessMetricsName = []MetricName{
-		MetricProcessCPUPercent,
-		MetricProcessCPUMemoryUsed,
-		MetricProcessGPUMemoryUsed,
-		MetricProcessSmUtil,
-		MetricProcessGPUMemoryUtil,
-		MetricProcessFrameMemUtil,
-		MetricProcessDecodeUtil,
-		MetricProcessEncodeUtil,
+	ProcessLabels             = []string{"gpu", "pid", "procName", "user"}
+	getProcessStatLabelValues = func(ps ProcessStat) []string {
+		return []string{
+			fmt.Sprintf("%d", ps.GPUIndex),
+			fmt.Sprintf("%d", ps.Pid),
+			ps.ProcName,
+			ps.User,
+		}
+	}
+
+	// todo: configFiles
+	SupportedProcessMetricsName = []string{
+		PROCESS_CPU_PERCENT,
+		PROCESS_CPU_MEM_USED_BYTES,
+		PROCESS_GPU_SM_UTIL,
+		PROCESS_GPU_MEM_UTIL,
+		PROCESS_GPU_DECODE_UTIL,
+		PROCESS_GPU_ENCODE_UTIL,
 	}
 )
 
 type ProcessCollector struct {
-	cache       *NVMLCache
-	metricDescs map[MetricName]*prometheus.Desc
+	cache              *NVMLCache
+	metricDescs        map[string]*prometheus.Desc
+	funcGetLabelValues func(ps ProcessStat) []string
+	config             *Config
 }
 
-func NewProcessCollector(config *Config) *ProcessCollector {
-	metricsMap := make(map[MetricName]*prometheus.Desc)
+func NewProcessCollector(config *Config, cache *NVMLCache) *ProcessCollector {
+	metricsMap := make(map[string]*prometheus.Desc)
 	for _, name := range SupportedProcessMetricsName {
 		if !config.UseSlurm {
 			metricsMap[name] = prometheus.NewDesc(
-				prometheus.BuildFQName(namespace, "", string(name)),
+				name,
 				fmt.Sprintf("nvml process exporter -- %s", name),
 				ProcessLabels,
 				prometheus.Labels{LabelHostName: config.HostName},
 			)
+
 		} else {
 			// slurm添加的SlurmProcLabels
 			metricsMap[name] = prometheus.NewDesc(
-				prometheus.BuildFQName(namespace, "", string(name)),
+				name,
 				fmt.Sprintf("nvml process exporter -- %s", name),
 				SlurmProcLabels,
 				prometheus.Labels{LabelHostName: config.HostName},
 			)
 		}
 	}
-	return &ProcessCollector{
+	psCollector := &ProcessCollector{
 		metricDescs: metricsMap,
+		cache:       cache,
+		config:      config,
 	}
+	// slurmConfig
+	if config.UseSlurm {
+		psCollector.funcGetLabelValues = getSlurmProcessStatLabelValues
+	} else {
+		psCollector.funcGetLabelValues = getProcessStatLabelValues
+	}
+
+	return psCollector
 
 }
 
@@ -74,84 +83,16 @@ func (c *ProcessCollector) Collect(ch chan<- prometheus.Metric) {
 	for metricName, desc := range c.metricDescs {
 		for _, ps := range processCache {
 			// todo: slurm proc
-			metric := convertProcStatToMetric(metricName, desc, ps)
+			value := ps.GetValueFromMetricName(metricName)
+			metric := prometheus.MustNewConstMetric(
+				desc,
+				prometheus.GaugeValue,
+				value,
+				c.funcGetLabelValues(ps)...,
+			)
 			if metric != nil {
 				ch <- metric
 			}
-
 		}
-	}
-}
-
-func convertProcStatToMetric(metricName MetricName, desc *prometheus.Desc, ps ProcessStat) prometheus.Metric {
-	switch metricName {
-	case MetricProcessCPUPercent:
-		return prometheus.MustNewConstMetric(
-			desc,
-			prometheus.GaugeValue,
-			float64(ps.CPUPercent),
-			psLabelValues(ps)...,
-		)
-	case MetricProcessCPUMemoryUsed:
-		return prometheus.MustNewConstMetric(
-			desc,
-			prometheus.GaugeValue,
-			float64(ps.CPUMemoryUsed),
-			psLabelValues(ps)...,
-		)
-	case MetricProcessGPUMemoryUsed:
-		return prometheus.MustNewConstMetric(
-			desc,
-			prometheus.GaugeValue,
-			float64(ps.GPUMemoryUsed),
-			psLabelValues(ps)...,
-		)
-	case MetricProcessSmUtil:
-		return prometheus.MustNewConstMetric(
-			desc,
-			prometheus.GaugeValue,
-			float64(ps.Smutil),
-			psLabelValues(ps)...,
-		)
-	case MetricProcessGPUMemoryUtil:
-		return prometheus.MustNewConstMetric(
-			desc,
-			prometheus.GaugeValue,
-			float64(ps.Memutil),
-			psLabelValues(ps)...,
-		)
-	case MetricProcessFrameMemUtil:
-		return prometheus.MustNewConstMetric(
-			desc,
-			prometheus.GaugeValue,
-			float64(ps.FrameMemUtil),
-			psLabelValues(ps)...,
-		)
-	case MetricProcessDecodeUtil:
-		return prometheus.MustNewConstMetric(
-			desc,
-			prometheus.GaugeValue,
-			float64(ps.Decutil),
-			psLabelValues(ps)...,
-		)
-	case MetricProcessEncodeUtil:
-		return prometheus.MustNewConstMetric(
-			desc,
-			prometheus.GaugeValue,
-			float64(ps.Encutil),
-			psLabelValues(ps)...,
-		)
-	default:
-		return nil
-	}
-}
-
-// 	ProcessLabels = []string{LabelGPU, LabelPID, LabelProcName, LabelUser}
-func psLabelValues(ps ProcessStat) []string {
-	return []string{
-		fmt.Sprintf("%d", ps.GPUIndex),
-		fmt.Sprintf("%d", ps.Pid),
-		ps.ProcName,
-		ps.UserName,
 	}
 }
