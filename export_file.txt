@@ -1,0 +1,182 @@
+# HELP gpu_dec_utilization Decoder utilization (in %).
+# TYPE gpu_dec_utilization gauge
+gpu_dec_utilization{Hostname="inspur-gpu-13",UUID="GPU-348870e8-c797-d913-4e35-f76a0b88e573",gpu="7",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_dec_utilization{Hostname="inspur-gpu-13",UUID="GPU-3b6ec007-9eb5-24a8-10e0-3c934e19331c",gpu="4",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_dec_utilization{Hostname="inspur-gpu-13",UUID="GPU-587b3d37-1405-f68b-49d2-fa321a49afcb",gpu="5",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_dec_utilization{Hostname="inspur-gpu-13",UUID="GPU-662d6d2f-8a02-b2d0-fa5c-51ecb620248a",gpu="6",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_dec_utilization{Hostname="inspur-gpu-13",UUID="GPU-cb035336-9e96-cb92-7ce0-73d92be31436",gpu="3",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_dec_utilization{Hostname="inspur-gpu-13",UUID="GPU-de9cec4f-7b79-9977-df89-bcc102daf18e",gpu="0",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_dec_utilization{Hostname="inspur-gpu-13",UUID="GPU-e3efd914-26cf-3a09-552c-919e3cb98e1f",gpu="2",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_dec_utilization{Hostname="inspur-gpu-13",UUID="GPU-ffec8d83-0ff8-5ac2-2851-1a9a8ca5c654",gpu="1",modelName="NVIDIA A100-SXM4-40GB"} 0
+# HELP gpu_enc_utilization Encoder utilization (in %).
+# TYPE gpu_enc_utilization gauge
+gpu_enc_utilization{Hostname="inspur-gpu-13",UUID="GPU-348870e8-c797-d913-4e35-f76a0b88e573",gpu="7",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_enc_utilization{Hostname="inspur-gpu-13",UUID="GPU-3b6ec007-9eb5-24a8-10e0-3c934e19331c",gpu="4",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_enc_utilization{Hostname="inspur-gpu-13",UUID="GPU-587b3d37-1405-f68b-49d2-fa321a49afcb",gpu="5",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_enc_utilization{Hostname="inspur-gpu-13",UUID="GPU-662d6d2f-8a02-b2d0-fa5c-51ecb620248a",gpu="6",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_enc_utilization{Hostname="inspur-gpu-13",UUID="GPU-cb035336-9e96-cb92-7ce0-73d92be31436",gpu="3",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_enc_utilization{Hostname="inspur-gpu-13",UUID="GPU-de9cec4f-7b79-9977-df89-bcc102daf18e",gpu="0",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_enc_utilization{Hostname="inspur-gpu-13",UUID="GPU-e3efd914-26cf-3a09-552c-919e3cb98e1f",gpu="2",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_enc_utilization{Hostname="inspur-gpu-13",UUID="GPU-ffec8d83-0ff8-5ac2-2851-1a9a8ca5c654",gpu="1",modelName="NVIDIA A100-SXM4-40GB"} 0
+# HELP gpu_fan_speed Fan speed (in %).
+# TYPE gpu_fan_speed gauge
+gpu_fan_speed{Hostname="inspur-gpu-13",UUID="GPU-348870e8-c797-d913-4e35-f76a0b88e573",gpu="7",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_fan_speed{Hostname="inspur-gpu-13",UUID="GPU-3b6ec007-9eb5-24a8-10e0-3c934e19331c",gpu="4",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_fan_speed{Hostname="inspur-gpu-13",UUID="GPU-587b3d37-1405-f68b-49d2-fa321a49afcb",gpu="5",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_fan_speed{Hostname="inspur-gpu-13",UUID="GPU-662d6d2f-8a02-b2d0-fa5c-51ecb620248a",gpu="6",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_fan_speed{Hostname="inspur-gpu-13",UUID="GPU-cb035336-9e96-cb92-7ce0-73d92be31436",gpu="3",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_fan_speed{Hostname="inspur-gpu-13",UUID="GPU-de9cec4f-7b79-9977-df89-bcc102daf18e",gpu="0",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_fan_speed{Hostname="inspur-gpu-13",UUID="GPU-e3efd914-26cf-3a09-552c-919e3cb98e1f",gpu="2",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_fan_speed{Hostname="inspur-gpu-13",UUID="GPU-ffec8d83-0ff8-5ac2-2851-1a9a8ca5c654",gpu="1",modelName="NVIDIA A100-SXM4-40GB"} 0
+# HELP gpu_mem_copy_utilization Memory utilization (in %).
+# TYPE gpu_mem_copy_utilization gauge
+gpu_mem_copy_utilization{Hostname="inspur-gpu-13",UUID="GPU-348870e8-c797-d913-4e35-f76a0b88e573",gpu="7",modelName="NVIDIA A100-SXM4-40GB"} 33
+gpu_mem_copy_utilization{Hostname="inspur-gpu-13",UUID="GPU-3b6ec007-9eb5-24a8-10e0-3c934e19331c",gpu="4",modelName="NVIDIA A100-SXM4-40GB"} 45
+gpu_mem_copy_utilization{Hostname="inspur-gpu-13",UUID="GPU-587b3d37-1405-f68b-49d2-fa321a49afcb",gpu="5",modelName="NVIDIA A100-SXM4-40GB"} 46
+gpu_mem_copy_utilization{Hostname="inspur-gpu-13",UUID="GPU-662d6d2f-8a02-b2d0-fa5c-51ecb620248a",gpu="6",modelName="NVIDIA A100-SXM4-40GB"} 27
+gpu_mem_copy_utilization{Hostname="inspur-gpu-13",UUID="GPU-cb035336-9e96-cb92-7ce0-73d92be31436",gpu="3",modelName="NVIDIA A100-SXM4-40GB"} 29
+gpu_mem_copy_utilization{Hostname="inspur-gpu-13",UUID="GPU-de9cec4f-7b79-9977-df89-bcc102daf18e",gpu="0",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_mem_copy_utilization{Hostname="inspur-gpu-13",UUID="GPU-e3efd914-26cf-3a09-552c-919e3cb98e1f",gpu="2",modelName="NVIDIA A100-SXM4-40GB"} 27
+gpu_mem_copy_utilization{Hostname="inspur-gpu-13",UUID="GPU-ffec8d83-0ff8-5ac2-2851-1a9a8ca5c654",gpu="1",modelName="NVIDIA A100-SXM4-40GB"} 0
+# HELP gpu_memory_clock Memory clock frequency (in MHz).
+# TYPE gpu_memory_clock gauge
+gpu_memory_clock{Hostname="inspur-gpu-13",UUID="GPU-348870e8-c797-d913-4e35-f76a0b88e573",gpu="7",modelName="NVIDIA A100-SXM4-40GB"} 1215
+gpu_memory_clock{Hostname="inspur-gpu-13",UUID="GPU-3b6ec007-9eb5-24a8-10e0-3c934e19331c",gpu="4",modelName="NVIDIA A100-SXM4-40GB"} 1215
+gpu_memory_clock{Hostname="inspur-gpu-13",UUID="GPU-587b3d37-1405-f68b-49d2-fa321a49afcb",gpu="5",modelName="NVIDIA A100-SXM4-40GB"} 1215
+gpu_memory_clock{Hostname="inspur-gpu-13",UUID="GPU-662d6d2f-8a02-b2d0-fa5c-51ecb620248a",gpu="6",modelName="NVIDIA A100-SXM4-40GB"} 1215
+gpu_memory_clock{Hostname="inspur-gpu-13",UUID="GPU-cb035336-9e96-cb92-7ce0-73d92be31436",gpu="3",modelName="NVIDIA A100-SXM4-40GB"} 1215
+gpu_memory_clock{Hostname="inspur-gpu-13",UUID="GPU-de9cec4f-7b79-9977-df89-bcc102daf18e",gpu="0",modelName="NVIDIA A100-SXM4-40GB"} 1215
+gpu_memory_clock{Hostname="inspur-gpu-13",UUID="GPU-e3efd914-26cf-3a09-552c-919e3cb98e1f",gpu="2",modelName="NVIDIA A100-SXM4-40GB"} 1215
+gpu_memory_clock{Hostname="inspur-gpu-13",UUID="GPU-ffec8d83-0ff8-5ac2-2851-1a9a8ca5c654",gpu="1",modelName="NVIDIA A100-SXM4-40GB"} 1215
+# HELP gpu_memory_free_bytes Framebuffer memory free bytes.
+# TYPE gpu_memory_free_bytes gauge
+gpu_memory_free_bytes{Hostname="inspur-gpu-13",UUID="GPU-348870e8-c797-d913-4e35-f76a0b88e573",gpu="7",modelName="NVIDIA A100-SXM4-40GB"} 2.143223808e+09
+gpu_memory_free_bytes{Hostname="inspur-gpu-13",UUID="GPU-3b6ec007-9eb5-24a8-10e0-3c934e19331c",gpu="4",modelName="NVIDIA A100-SXM4-40GB"} 2.143223808e+09
+gpu_memory_free_bytes{Hostname="inspur-gpu-13",UUID="GPU-587b3d37-1405-f68b-49d2-fa321a49afcb",gpu="5",modelName="NVIDIA A100-SXM4-40GB"} 1.992228864e+09
+gpu_memory_free_bytes{Hostname="inspur-gpu-13",UUID="GPU-662d6d2f-8a02-b2d0-fa5c-51ecb620248a",gpu="6",modelName="NVIDIA A100-SXM4-40GB"} 1.992228864e+09
+gpu_memory_free_bytes{Hostname="inspur-gpu-13",UUID="GPU-cb035336-9e96-cb92-7ce0-73d92be31436",gpu="3",modelName="NVIDIA A100-SXM4-40GB"} 2.320072704e+10
+gpu_memory_free_bytes{Hostname="inspur-gpu-13",UUID="GPU-de9cec4f-7b79-9977-df89-bcc102daf18e",gpu="0",modelName="NVIDIA A100-SXM4-40GB"} 4.328456192e+09
+gpu_memory_free_bytes{Hostname="inspur-gpu-13",UUID="GPU-e3efd914-26cf-3a09-552c-919e3cb98e1f",gpu="2",modelName="NVIDIA A100-SXM4-40GB"} 2.0310851584e+10
+gpu_memory_free_bytes{Hostname="inspur-gpu-13",UUID="GPU-ffec8d83-0ff8-5ac2-2851-1a9a8ca5c654",gpu="1",modelName="NVIDIA A100-SXM4-40GB"} 4.317970432e+09
+# HELP gpu_memory_used_bytes Framebuffer memory used bytes.
+# TYPE gpu_memory_used_bytes gauge
+gpu_memory_used_bytes{Hostname="inspur-gpu-13",UUID="GPU-348870e8-c797-d913-4e35-f76a0b88e573",gpu="7",modelName="NVIDIA A100-SXM4-40GB"} 4.0806449152e+10
+gpu_memory_used_bytes{Hostname="inspur-gpu-13",UUID="GPU-3b6ec007-9eb5-24a8-10e0-3c934e19331c",gpu="4",modelName="NVIDIA A100-SXM4-40GB"} 4.0806449152e+10
+gpu_memory_used_bytes{Hostname="inspur-gpu-13",UUID="GPU-587b3d37-1405-f68b-49d2-fa321a49afcb",gpu="5",modelName="NVIDIA A100-SXM4-40GB"} 4.0957444096e+10
+gpu_memory_used_bytes{Hostname="inspur-gpu-13",UUID="GPU-662d6d2f-8a02-b2d0-fa5c-51ecb620248a",gpu="6",modelName="NVIDIA A100-SXM4-40GB"} 4.0957444096e+10
+gpu_memory_used_bytes{Hostname="inspur-gpu-13",UUID="GPU-cb035336-9e96-cb92-7ce0-73d92be31436",gpu="3",modelName="NVIDIA A100-SXM4-40GB"} 1.974894592e+10
+gpu_memory_used_bytes{Hostname="inspur-gpu-13",UUID="GPU-de9cec4f-7b79-9977-df89-bcc102daf18e",gpu="0",modelName="NVIDIA A100-SXM4-40GB"} 3.8621216768e+10
+gpu_memory_used_bytes{Hostname="inspur-gpu-13",UUID="GPU-e3efd914-26cf-3a09-552c-919e3cb98e1f",gpu="2",modelName="NVIDIA A100-SXM4-40GB"} 2.2638821376e+10
+gpu_memory_used_bytes{Hostname="inspur-gpu-13",UUID="GPU-ffec8d83-0ff8-5ac2-2851-1a9a8ca5c654",gpu="1",modelName="NVIDIA A100-SXM4-40GB"} 3.8631702528e+10
+# HELP gpu_power_usage Power draw (in W).
+# TYPE gpu_power_usage gauge
+gpu_power_usage{Hostname="inspur-gpu-13",UUID="GPU-348870e8-c797-d913-4e35-f76a0b88e573",gpu="7",modelName="NVIDIA A100-SXM4-40GB"} 216
+gpu_power_usage{Hostname="inspur-gpu-13",UUID="GPU-3b6ec007-9eb5-24a8-10e0-3c934e19331c",gpu="4",modelName="NVIDIA A100-SXM4-40GB"} 183
+gpu_power_usage{Hostname="inspur-gpu-13",UUID="GPU-587b3d37-1405-f68b-49d2-fa321a49afcb",gpu="5",modelName="NVIDIA A100-SXM4-40GB"} 204
+gpu_power_usage{Hostname="inspur-gpu-13",UUID="GPU-662d6d2f-8a02-b2d0-fa5c-51ecb620248a",gpu="6",modelName="NVIDIA A100-SXM4-40GB"} 177
+gpu_power_usage{Hostname="inspur-gpu-13",UUID="GPU-cb035336-9e96-cb92-7ce0-73d92be31436",gpu="3",modelName="NVIDIA A100-SXM4-40GB"} 321
+gpu_power_usage{Hostname="inspur-gpu-13",UUID="GPU-de9cec4f-7b79-9977-df89-bcc102daf18e",gpu="0",modelName="NVIDIA A100-SXM4-40GB"} 65
+gpu_power_usage{Hostname="inspur-gpu-13",UUID="GPU-e3efd914-26cf-3a09-552c-919e3cb98e1f",gpu="2",modelName="NVIDIA A100-SXM4-40GB"} 366
+gpu_power_usage{Hostname="inspur-gpu-13",UUID="GPU-ffec8d83-0ff8-5ac2-2851-1a9a8ca5c654",gpu="1",modelName="NVIDIA A100-SXM4-40GB"} 60
+# HELP gpu_sm_clock SM clock frequency (in MHz).
+# TYPE gpu_sm_clock gauge
+gpu_sm_clock{Hostname="inspur-gpu-13",UUID="GPU-348870e8-c797-d913-4e35-f76a0b88e573",gpu="7",modelName="NVIDIA A100-SXM4-40GB"} 1410
+gpu_sm_clock{Hostname="inspur-gpu-13",UUID="GPU-3b6ec007-9eb5-24a8-10e0-3c934e19331c",gpu="4",modelName="NVIDIA A100-SXM4-40GB"} 1410
+gpu_sm_clock{Hostname="inspur-gpu-13",UUID="GPU-587b3d37-1405-f68b-49d2-fa321a49afcb",gpu="5",modelName="NVIDIA A100-SXM4-40GB"} 1410
+gpu_sm_clock{Hostname="inspur-gpu-13",UUID="GPU-662d6d2f-8a02-b2d0-fa5c-51ecb620248a",gpu="6",modelName="NVIDIA A100-SXM4-40GB"} 1410
+gpu_sm_clock{Hostname="inspur-gpu-13",UUID="GPU-cb035336-9e96-cb92-7ce0-73d92be31436",gpu="3",modelName="NVIDIA A100-SXM4-40GB"} 1410
+gpu_sm_clock{Hostname="inspur-gpu-13",UUID="GPU-de9cec4f-7b79-9977-df89-bcc102daf18e",gpu="0",modelName="NVIDIA A100-SXM4-40GB"} 1095
+gpu_sm_clock{Hostname="inspur-gpu-13",UUID="GPU-e3efd914-26cf-3a09-552c-919e3cb98e1f",gpu="2",modelName="NVIDIA A100-SXM4-40GB"} 1410
+gpu_sm_clock{Hostname="inspur-gpu-13",UUID="GPU-ffec8d83-0ff8-5ac2-2851-1a9a8ca5c654",gpu="1",modelName="NVIDIA A100-SXM4-40GB"} 1095
+# HELP gpu_temperature GPU temperature (in C).
+# TYPE gpu_temperature gauge
+gpu_temperature{Hostname="inspur-gpu-13",UUID="GPU-348870e8-c797-d913-4e35-f76a0b88e573",gpu="7",modelName="NVIDIA A100-SXM4-40GB"} 40
+gpu_temperature{Hostname="inspur-gpu-13",UUID="GPU-3b6ec007-9eb5-24a8-10e0-3c934e19331c",gpu="4",modelName="NVIDIA A100-SXM4-40GB"} 39
+gpu_temperature{Hostname="inspur-gpu-13",UUID="GPU-587b3d37-1405-f68b-49d2-fa321a49afcb",gpu="5",modelName="NVIDIA A100-SXM4-40GB"} 41
+gpu_temperature{Hostname="inspur-gpu-13",UUID="GPU-662d6d2f-8a02-b2d0-fa5c-51ecb620248a",gpu="6",modelName="NVIDIA A100-SXM4-40GB"} 39
+gpu_temperature{Hostname="inspur-gpu-13",UUID="GPU-cb035336-9e96-cb92-7ce0-73d92be31436",gpu="3",modelName="NVIDIA A100-SXM4-40GB"} 63
+gpu_temperature{Hostname="inspur-gpu-13",UUID="GPU-de9cec4f-7b79-9977-df89-bcc102daf18e",gpu="0",modelName="NVIDIA A100-SXM4-40GB"} 32
+gpu_temperature{Hostname="inspur-gpu-13",UUID="GPU-e3efd914-26cf-3a09-552c-919e3cb98e1f",gpu="2",modelName="NVIDIA A100-SXM4-40GB"} 74
+gpu_temperature{Hostname="inspur-gpu-13",UUID="GPU-ffec8d83-0ff8-5ac2-2851-1a9a8ca5c654",gpu="1",modelName="NVIDIA A100-SXM4-40GB"} 32
+# HELP gpu_total_energy_consumption Total energy consumption since boot (in mJ).
+# TYPE gpu_total_energy_consumption counter
+gpu_total_energy_consumption{Hostname="inspur-gpu-13",UUID="GPU-348870e8-c797-d913-4e35-f76a0b88e573",gpu="7",modelName="NVIDIA A100-SXM4-40GB"} 5.4812276215e+13
+gpu_total_energy_consumption{Hostname="inspur-gpu-13",UUID="GPU-3b6ec007-9eb5-24a8-10e0-3c934e19331c",gpu="4",modelName="NVIDIA A100-SXM4-40GB"} 5.2725416248e+13
+gpu_total_energy_consumption{Hostname="inspur-gpu-13",UUID="GPU-587b3d37-1405-f68b-49d2-fa321a49afcb",gpu="5",modelName="NVIDIA A100-SXM4-40GB"} 5.6389900208e+13
+gpu_total_energy_consumption{Hostname="inspur-gpu-13",UUID="GPU-662d6d2f-8a02-b2d0-fa5c-51ecb620248a",gpu="6",modelName="NVIDIA A100-SXM4-40GB"} 5.3220130716e+13
+gpu_total_energy_consumption{Hostname="inspur-gpu-13",UUID="GPU-cb035336-9e96-cb92-7ce0-73d92be31436",gpu="3",modelName="NVIDIA A100-SXM4-40GB"} 7.1544104546e+13
+gpu_total_energy_consumption{Hostname="inspur-gpu-13",UUID="GPU-de9cec4f-7b79-9977-df89-bcc102daf18e",gpu="0",modelName="NVIDIA A100-SXM4-40GB"} 7.4613189393e+13
+gpu_total_energy_consumption{Hostname="inspur-gpu-13",UUID="GPU-e3efd914-26cf-3a09-552c-919e3cb98e1f",gpu="2",modelName="NVIDIA A100-SXM4-40GB"} 7.1413905264e+13
+gpu_total_energy_consumption{Hostname="inspur-gpu-13",UUID="GPU-ffec8d83-0ff8-5ac2-2851-1a9a8ca5c654",gpu="1",modelName="NVIDIA A100-SXM4-40GB"} 6.9762924736e+13
+# HELP gpu_utilization GPU utilization (in %).
+# TYPE gpu_utilization gauge
+gpu_utilization{Hostname="inspur-gpu-13",UUID="GPU-348870e8-c797-d913-4e35-f76a0b88e573",gpu="7",modelName="NVIDIA A100-SXM4-40GB"} 60
+gpu_utilization{Hostname="inspur-gpu-13",UUID="GPU-3b6ec007-9eb5-24a8-10e0-3c934e19331c",gpu="4",modelName="NVIDIA A100-SXM4-40GB"} 77
+gpu_utilization{Hostname="inspur-gpu-13",UUID="GPU-587b3d37-1405-f68b-49d2-fa321a49afcb",gpu="5",modelName="NVIDIA A100-SXM4-40GB"} 77
+gpu_utilization{Hostname="inspur-gpu-13",UUID="GPU-662d6d2f-8a02-b2d0-fa5c-51ecb620248a",gpu="6",modelName="NVIDIA A100-SXM4-40GB"} 60
+gpu_utilization{Hostname="inspur-gpu-13",UUID="GPU-cb035336-9e96-cb92-7ce0-73d92be31436",gpu="3",modelName="NVIDIA A100-SXM4-40GB"} 100
+gpu_utilization{Hostname="inspur-gpu-13",UUID="GPU-de9cec4f-7b79-9977-df89-bcc102daf18e",gpu="0",modelName="NVIDIA A100-SXM4-40GB"} 0
+gpu_utilization{Hostname="inspur-gpu-13",UUID="GPU-e3efd914-26cf-3a09-552c-919e3cb98e1f",gpu="2",modelName="NVIDIA A100-SXM4-40GB"} 96
+gpu_utilization{Hostname="inspur-gpu-13",UUID="GPU-ffec8d83-0ff8-5ac2-2851-1a9a8ca5c654",gpu="1",modelName="NVIDIA A100-SXM4-40GB"} 0
+# HELP process_cpu_mem_used_bytes Process CPU memory used bytes.
+# TYPE process_cpu_mem_used_bytes gauge
+process_cpu_mem_used_bytes{Hostname="inspur-gpu-13",gpu="0",pid="613750",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 3.522506752e+09
+process_cpu_mem_used_bytes{Hostname="inspur-gpu-13",gpu="1",pid="613751",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 3.519086592e+09
+process_cpu_mem_used_bytes{Hostname="inspur-gpu-13",gpu="3",pid="761039",procName="python",slurmAccount="tangzhenyu",slurmJobID="1155",slurmJobName="bash",slurmStepID="0",slurmUser="chenjc",user="chenjc"} 1.1225255936e+10
+process_cpu_mem_used_bytes{Hostname="inspur-gpu-13",gpu="4",pid="730553",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 6.664957952e+09
+process_cpu_mem_used_bytes{Hostname="inspur-gpu-13",gpu="5",pid="730554",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 6.675533824e+09
+process_cpu_mem_used_bytes{Hostname="inspur-gpu-13",gpu="6",pid="730555",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 6.671556608e+09
+process_cpu_mem_used_bytes{Hostname="inspur-gpu-13",gpu="7",pid="730556",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 6.734938112e+09
+# HELP process_cpu_precent Process CPU percent.
+# TYPE process_cpu_precent gauge
+process_cpu_precent{Hostname="inspur-gpu-13",gpu="0",pid="613750",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 35.63565296297763
+process_cpu_precent{Hostname="inspur-gpu-13",gpu="1",pid="613751",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 60.908034760529006
+process_cpu_precent{Hostname="inspur-gpu-13",gpu="3",pid="761039",procName="python",slurmAccount="tangzhenyu",slurmJobID="1155",slurmJobName="bash",slurmStepID="0",slurmUser="chenjc",user="chenjc"} 103.59517762424693
+process_cpu_precent{Hostname="inspur-gpu-13",gpu="4",pid="730553",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 86.76459534757161
+process_cpu_precent{Hostname="inspur-gpu-13",gpu="5",pid="730554",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 89.60308804633553
+process_cpu_precent{Hostname="inspur-gpu-13",gpu="6",pid="730555",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 90.15036294886403
+process_cpu_precent{Hostname="inspur-gpu-13",gpu="7",pid="730556",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 90.48996113825615
+# HELP process_gpu_decode_util Process GPU decode util (in %).
+# TYPE process_gpu_decode_util gauge
+process_gpu_decode_util{Hostname="inspur-gpu-13",gpu="0",pid="613750",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 0
+process_gpu_decode_util{Hostname="inspur-gpu-13",gpu="1",pid="613751",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 0
+process_gpu_decode_util{Hostname="inspur-gpu-13",gpu="3",pid="761039",procName="python",slurmAccount="tangzhenyu",slurmJobID="1155",slurmJobName="bash",slurmStepID="0",slurmUser="chenjc",user="chenjc"} 0
+process_gpu_decode_util{Hostname="inspur-gpu-13",gpu="4",pid="730553",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+process_gpu_decode_util{Hostname="inspur-gpu-13",gpu="5",pid="730554",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+process_gpu_decode_util{Hostname="inspur-gpu-13",gpu="6",pid="730555",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+process_gpu_decode_util{Hostname="inspur-gpu-13",gpu="7",pid="730556",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+# HELP process_gpu_encode_util Process GPU encode util (in %).
+# TYPE process_gpu_encode_util gauge
+process_gpu_encode_util{Hostname="inspur-gpu-13",gpu="0",pid="613750",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 0
+process_gpu_encode_util{Hostname="inspur-gpu-13",gpu="1",pid="613751",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 0
+process_gpu_encode_util{Hostname="inspur-gpu-13",gpu="3",pid="761039",procName="python",slurmAccount="tangzhenyu",slurmJobID="1155",slurmJobName="bash",slurmStepID="0",slurmUser="chenjc",user="chenjc"} 0
+process_gpu_encode_util{Hostname="inspur-gpu-13",gpu="4",pid="730553",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+process_gpu_encode_util{Hostname="inspur-gpu-13",gpu="5",pid="730554",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+process_gpu_encode_util{Hostname="inspur-gpu-13",gpu="6",pid="730555",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+process_gpu_encode_util{Hostname="inspur-gpu-13",gpu="7",pid="730556",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+# HELP process_gpu_mem_util Process GPU memory util (in %).
+# TYPE process_gpu_mem_util gauge
+process_gpu_mem_util{Hostname="inspur-gpu-13",gpu="0",pid="613750",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 0
+process_gpu_mem_util{Hostname="inspur-gpu-13",gpu="1",pid="613751",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 0
+process_gpu_mem_util{Hostname="inspur-gpu-13",gpu="3",pid="761039",procName="python",slurmAccount="tangzhenyu",slurmJobID="1155",slurmJobName="bash",slurmStepID="0",slurmUser="chenjc",user="chenjc"} 0
+process_gpu_mem_util{Hostname="inspur-gpu-13",gpu="4",pid="730553",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+process_gpu_mem_util{Hostname="inspur-gpu-13",gpu="5",pid="730554",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+process_gpu_mem_util{Hostname="inspur-gpu-13",gpu="6",pid="730555",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+process_gpu_mem_util{Hostname="inspur-gpu-13",gpu="7",pid="730556",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+# HELP process_gpu_sm_util Process GPU SM util (in %).
+# TYPE process_gpu_sm_util gauge
+process_gpu_sm_util{Hostname="inspur-gpu-13",gpu="0",pid="613750",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 0
+process_gpu_sm_util{Hostname="inspur-gpu-13",gpu="1",pid="613751",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 0
+process_gpu_sm_util{Hostname="inspur-gpu-13",gpu="3",pid="761039",procName="python",slurmAccount="tangzhenyu",slurmJobID="1155",slurmJobName="bash",slurmStepID="0",slurmUser="chenjc",user="chenjc"} 0
+process_gpu_sm_util{Hostname="inspur-gpu-13",gpu="4",pid="730553",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+process_gpu_sm_util{Hostname="inspur-gpu-13",gpu="5",pid="730554",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+process_gpu_sm_util{Hostname="inspur-gpu-13",gpu="6",pid="730555",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+process_gpu_sm_util{Hostname="inspur-gpu-13",gpu="7",pid="730556",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 0
+# HELP process_num_threads Process num threads.
+# TYPE process_num_threads gauge
+process_num_threads{Hostname="inspur-gpu-13",gpu="0",pid="613750",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 17
+process_num_threads{Hostname="inspur-gpu-13",gpu="1",pid="613751",procName="python3",slurmAccount="zhangrichong",slurmJobID="1065",slurmJobName="bash",slurmStepID="0",slurmUser="niezj",user="niezj"} 17
+process_num_threads{Hostname="inspur-gpu-13",gpu="4",pid="730553",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 18
+process_num_threads{Hostname="inspur-gpu-13",gpu="5",pid="730554",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 18
+process_num_threads{Hostname="inspur-gpu-13",gpu="6",pid="730555",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 18
+process_num_threads{Hostname="inspur-gpu-13",gpu="7",pid="730556",procName="python",slurmAccount="zhouhaoyi",slurmJobID="1082",slurmJobName="bash",slurmStepID="0",slurmUser="songqi23",user="songqi23"} 18

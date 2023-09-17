@@ -1,0 +1,23 @@
+metricName: 
+- gpu_sm_clock
+- gpu_memory_clock
+- gpu_temperature
+- gpu_fan_speed
+- gpu_power_usage
+- gpu_total_energy_consumption
+# - gpu_pcie_tx_bytes # long time to achieve
+# - gpu_pcie_rx_bytes # long time to achieve
+- gpu_utilization
+- gpu_mem_copy_utilization
+- gpu_enc_utilization
+- gpu_dec_utilization
+- gpu_memory_free_bytes
+- gpu_memory_used_bytes
+- process_cpu_precent
+- process_cpu_mem_used_bytes
+- process_num_threads
+- process_gpu_sm_util
+- process_gpu_mem_util
+- process_gpu_decode_util
+- process_gpu_encode_util
+- process_gpu_mem_used_bytes

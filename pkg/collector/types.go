@@ -199,6 +199,7 @@ func (g *GPUDevice) GetProcessStat(useSlurm bool) map[uint]ProcessStat {
 			p.Memutil = proc.MemUtil
 			p.Decutil = proc.DecUtil
 			p.Encutil = proc.EncUtil
+			retMap[uint(proc.Pid)] = p
 		}
 	}
 	return retMap
