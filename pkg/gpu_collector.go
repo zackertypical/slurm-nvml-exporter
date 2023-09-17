@@ -7,8 +7,7 @@ import (
 )
 
 var (
-	GPULabels = []string{"gpu", "UUID", "modelName"}
-
+	GPULabels             = []string{"gpu", "UUID", "modelName"}
 	getGPUStatLabelValues = func(gpu GPUStat) []string {
 		return []string{
 			fmt.Sprint("%d", gpu.GPUIndex),
@@ -16,15 +15,13 @@ var (
 			gpu.GPUModelName,
 		}
 	}
-	// todo: configFiles
+	// [x]: configFiles
 	SupportedGGPUMetricsName = []string{
 		GPU_SM_CLOCK,
-		gpu_memory_clock,
-
+		GPU_MEMORY_CLOCK,
 		//Temperature
-		GPU_MEMORY_TEMPERATURE,
 		GPU_TEMPERATURE,
-
+		GPU_FAN_SPEED,
 		// Power
 		GPU_POWER_USAGE,
 		GPU_TOTAL_ENERGY_CONSUMPTION,
@@ -54,10 +51,19 @@ type GPUCollector struct {
 
 func NewGPUCollector(config *Config, cache *NVMLCache) *GPUCollector {
 	metricsMap := make(map[string]*prometheus.Desc)
+	// 如果config是空的，用默认的SupportedGGPUMetricsName
+	if len(config.SupportedMetrics) > 0 {
+		SupportedGGPUMetricsName = []string{}
+		for _, name := range config.SupportedMetrics {
+			if ISGPUMetricName(name) {
+				SupportedGGPUMetricsName = append(SupportedGGPUMetricsName, name)
+			}
+		}
+	}
 	for _, name := range SupportedGGPUMetricsName {
 		metricsMap[name] = prometheus.NewDesc(
 			name,
-			fmt.Sprintf("nvml gpu exporter -- %s", name),
+			METRIC_META_MAP[name].Help,
 			GPULabels,
 			prometheus.Labels{LabelHostName: config.HostName},
 		)
@@ -82,11 +88,10 @@ func (c *GPUCollector) Collect(ch chan<- prometheus.Metric) {
 	gpuCache := c.cache.GetGPUStats()
 	for metricName, desc := range c.metricDescs {
 		for _, gpu := range gpuCache {
-			// todo: slurm proc
 			value := gpu.GetValueFromMetricName(metricName)
 			metric := prometheus.MustNewConstMetric(
 				desc,
-				prometheus.GaugeValue,
+				METRIC_META_MAP[metricName].PromType, // 从METRIC_META_MAP获取指标类型
 				value,
 				c.funcGetLabelValues(gpu)...,
 			)

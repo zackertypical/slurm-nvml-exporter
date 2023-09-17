@@ -1,4 +1,4 @@
-NVIDIA GPU Prometheus Exporter
+Slurm NVML GPU Prometheus Exporter
 ------------------------------
 
 This is a [Prometheus Exporter](https://prometheus.io/docs/instrumenting/exporters/) for
@@ -55,3 +55,12 @@ If you don't want to do the above, you can run it using nvidia-docker.
 ```
 nvidia-docker run -p 9445:9445 -ti mindprince/nvidia_gpu_prometheus_exporter:0.1
 ```
+
+## How to Add Customize Metric
+
+GPU Related Metric for example:
+
+* Add metric Meta in `consts.go`
+* Add metric to: `GPUStat` in `types.go`
+* Add get metric value to `DeviceGetGPUStat` in `types.go`
+* Add map to `GetValueFromMetricName` in `types.go`

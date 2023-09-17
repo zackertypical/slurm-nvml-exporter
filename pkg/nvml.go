@@ -18,7 +18,6 @@ package collector
 
 import (
 	"log"
-	"os"
 	"sync"
 	"time"
 
@@ -43,13 +42,6 @@ func NewNVMLCache(config *Config) (*NVMLCache, error) {
 
 	if ret != nvml.SUCCESS {
 		log.Fatalf("Unable to init NVML: %v", nvml.ErrorString(ret))
-	}
-
-	// hostName
-	hostname, err := os.Hostname()
-	if err != nil {
-		log.Printf("Unable to get hostname: %v", err)
-		hostname = ""
 	}
 
 	// 获取GPU数量
@@ -80,7 +72,7 @@ func NewNVMLCache(config *Config) (*NVMLCache, error) {
 		DeviceCount:  uint(count),
 		GPUStats:     make([]GPUStat, count),
 		ProcessStats: make(map[uint]ProcessStat),
-		Hostname:     hostname,
+		Hostname:     config.HostName,
 		config:       config,
 	}
 
@@ -89,6 +81,7 @@ func NewNVMLCache(config *Config) (*NVMLCache, error) {
 
 func (c *NVMLCache) Run(stop chan interface{}) {
 	t := time.NewTicker(time.Millisecond * time.Duration(c.config.CollectInterval))
+	defer nvml.Shutdown()
 	defer t.Stop()
 
 	for {
@@ -113,13 +106,12 @@ func (c *NVMLCache) udpateCache() error {
 	newGPUStat := make([]GPUStat, c.DeviceCount)
 	for i, devcie := range c.DeviceInfos {
 		// 更新GPUStat
-		newGPUStat[i] = devcie.DeviceGetGPUStat()
+		newGPUStat[i] = devcie.DeviceGetGPUStat(c.config.SupportedMetrics)
 		// 更新ProcStat
 		psStats := devcie.GetProcessStat(c.config.UseSlurm)
 		for _, ps := range psStats {
 			newProcStat[uint(ps.Pid)] = ps
 		}
-
 	}
 
 	c.Lock()

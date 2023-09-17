@@ -17,7 +17,6 @@ var (
 		}
 	}
 
-	// todo: configFiles
 	SupportedProcessMetricsName = []string{
 		PROCESS_CPU_PERCENT,
 		PROCESS_CPU_MEM_USED_BYTES,
@@ -37,11 +36,20 @@ type ProcessCollector struct {
 
 func NewProcessCollector(config *Config, cache *NVMLCache) *ProcessCollector {
 	metricsMap := make(map[string]*prometheus.Desc)
+	if len(config.SupportedMetrics) > 0 {
+		SupportedProcessMetricsName = []string{}
+		for _, name := range config.SupportedMetrics {
+			if ISProcessMetricName(name) {
+				SupportedProcessMetricsName = append(SupportedProcessMetricsName, name)
+			}
+		}
+	}
+
 	for _, name := range SupportedProcessMetricsName {
 		if !config.UseSlurm {
 			metricsMap[name] = prometheus.NewDesc(
 				name,
-				fmt.Sprintf("nvml process exporter -- %s", name),
+				METRIC_META_MAP[name].Help,
 				ProcessLabels,
 				prometheus.Labels{LabelHostName: config.HostName},
 			)
@@ -50,7 +58,7 @@ func NewProcessCollector(config *Config, cache *NVMLCache) *ProcessCollector {
 			// slurm添加的SlurmProcLabels
 			metricsMap[name] = prometheus.NewDesc(
 				name,
-				fmt.Sprintf("nvml process exporter -- %s", name),
+				METRIC_META_MAP[name].Help,
 				SlurmProcLabels,
 				prometheus.Labels{LabelHostName: config.HostName},
 			)
@@ -61,7 +69,7 @@ func NewProcessCollector(config *Config, cache *NVMLCache) *ProcessCollector {
 		cache:       cache,
 		config:      config,
 	}
-	// slurmConfig
+	// slurm相关添加的labels
 	if config.UseSlurm {
 		psCollector.funcGetLabelValues = getSlurmProcessStatLabelValues
 	} else {
@@ -69,7 +77,6 @@ func NewProcessCollector(config *Config, cache *NVMLCache) *ProcessCollector {
 	}
 
 	return psCollector
-
 }
 
 func (c *ProcessCollector) Describe(ch chan<- *prometheus.Desc) {
@@ -82,11 +89,10 @@ func (c *ProcessCollector) Collect(ch chan<- prometheus.Metric) {
 	processCache := c.cache.GetProcessStats()
 	for metricName, desc := range c.metricDescs {
 		for _, ps := range processCache {
-			// todo: slurm proc
 			value := ps.GetValueFromMetricName(metricName)
 			metric := prometheus.MustNewConstMetric(
 				desc,
-				prometheus.GaugeValue,
+				METRIC_META_MAP[metricName].PromType,
 				value,
 				c.funcGetLabelValues(ps)...,
 			)

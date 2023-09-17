@@ -17,6 +17,35 @@ const (
 	LabelHostName = "Hostname"
 )
 
+type Config struct {
+	CollectorsFile   string
+	ExporterPort     string
+	ServerPort       string
+	CollectInterval  int
+	UseSlurm         bool
+	SupportedMetrics []string
+	HostName         string
+}
+
+type GPUDevice struct {
+	nvml.Device
+
+	UUID             string
+	GPUModelName     string
+	GPUIndex         uint
+	Attributes       nvml.DeviceAttributes
+	PcieLinkMaxSpeed uint32
+}
+
+// todo: add GPUInfo
+type GPUInfo struct {
+	UUID             string
+	GPUModelName     string
+	GPUIndex         uint
+	Attributes       nvml.DeviceAttributes
+	PcieLinkMaxSpeed uint32
+}
+
 type ProcessStat struct {
 	Pid      uint32 `json:"pid"`
 	GPUIndex int    `json:"gpu"`
@@ -36,25 +65,6 @@ type ProcessStat struct {
 
 	// Slurm Lables
 	SlurmProcInfo
-}
-
-type GPUDevice struct {
-	nvml.Device
-
-	UUID             string
-	GPUModelName     string
-	GPUIndex         uint
-	Attributes       nvml.DeviceAttributes
-	PcieLinkMaxSpeed uint32
-
-	// Model                 *string
-	// Power                 *uint
-	// Memory                *uint64
-	// CPUAffinity           *uint
-	// PCI                   PCIInfo
-	// Clocks                ClockInfo
-	// Topology              []P2PLink
-	// CudaComputeCapability CudaComputeCapabilityInfo
 }
 
 // type DeviceAttributes struct {
@@ -100,69 +110,55 @@ type GPUStat struct {
 	MemoryUsed uint64 `json:"mem_used"`
 }
 
-type Config struct {
-	CollectorsFile  string
-	Address         string
-	CollectInterval int
-	UseSlurm        bool
-	ConfigMapData   string
-	HostName        string
-}
-
-// todo: configuration
-func (g *GPUDevice) DeviceGetGPUStat() GPUStat {
-	// 获取SM clock frequency
-	smClock, _ := g.GetClockInfo(nvml.CLOCK_SM)
-
-	// 获取Memory clock frequency
-	memClock, _ := g.GetClockInfo(nvml.CLOCK_MEM)
-
-	// 获取Power draw
-	powerUsage, _ := g.GetPowerUsage()
-
-	// 获取Total energy consumption since boot
-	energyConsumption, _ := g.GetTotalEnergyConsumption()
-
-	// 获取Fan speed
-	fanSpeed, _ := g.GetFanSpeed()
-
-	// 获取Temperature
-	temperature, _ := g.GetTemperature(nvml.TEMPERATURE_GPU)
-
-	// 获取GPU utilization rate
-	utilizationRates, _ := g.GetUtilizationRates()
-
-	// 获取GPU encoderUtil, decoderUtil
-	encoderUtil, _, _ := g.GetEncoderUtilization()
-	decoderUtil, _, _ := g.GetEncoderUtilization()
-
-	// 获取Memory utilization rate
-	memoryInfo, _ := g.GetMemoryInfo()
-
-	// 获取PCIe TX and RX bytes per second
-	// https://docs.nvidia.com/deploy/nvml-api/group__nvmlDeviceQueries.html#group__nvmlDeviceQueries_1gd86f1c74f81b5ddfaa6cb81b51030c72
-	pcieThroughputTX, _ := g.GetPcieThroughput(nvml.PCIE_UTIL_TX_BYTES)
-	pcieThroughputRX, _ := g.GetPcieThroughput(nvml.PCIE_UTIL_RX_BYTES)
-	return GPUStat{
-		GPUIndex:               g.GPUIndex,
-		UUID:                   g.UUID,
-		GPUModelName:           g.GPUModelName,
-		SMClock:                smClock,
-		MemClock:               memClock,
-		PowerUsage:             powerUsage / 1000,        // 转换为W
-		TotalEnergyConsumption: energyConsumption * 1000, // 转换为mJ
-		FanSpeed:               fanSpeed,
-		Temperature:            temperature,
-		GPUUtil:                utilizationRates.Gpu,
-		EncoderUtil:            encoderUtil,
-		DecoderUtil:            decoderUtil,
-		MemoryUtil:             utilizationRates.Memory,
-		MemoryFree:             memoryInfo.Free,
-		MemoryUsed:             memoryInfo.Used,
-		PCIETXBytes:            pcieThroughputTX * 1024, // KB/s 转换为bytes per second
-		PCIERXBytes:            pcieThroughputRX * 1024, // KB/s 转换为bytes per second
+// [x]: configuration
+// DeviceGetGPUStat Only gets the metric from arg metrics
+func (g *GPUDevice) DeviceGetGPUStat(metrics []string) GPUStat {
+	gpuStat := GPUStat{
+		GPUIndex:     g.GPUIndex,
+		UUID:         g.UUID,
+		GPUModelName: g.GPUModelName,
 	}
+	utilizationRates, _ := g.GetUtilizationRates()
+	memoryInfo, _ := g.GetMemoryInfo()
+	for _, metric := range metrics {
+		if !ISGPUMetricName(metric) {
+			continue
+		}
+		switch metric {
+		case GPU_SM_CLOCK:
+			gpuStat.SMClock, _ = g.GetClockInfo(nvml.CLOCK_SM)
+		case GPU_MEMORY_CLOCK:
+			gpuStat.MemClock, _ = g.GetClockInfo(nvml.CLOCK_MEM)
+		case GPU_TEMPERATURE:
+			gpuStat.Temperature, _ = g.GetTemperature(nvml.TEMPERATURE_GPU)
+		case GPU_POWER_USAGE:
+			power, _ := g.GetPowerUsage()
+			gpuStat.PowerUsage = power / 1000 // 转换为W
+		case GPU_TOTAL_ENERGY_CONSUMPTION:
+			energy, _ := g.GetTotalEnergyConsumption()
+			gpuStat.TotalEnergyConsumption = energy * 1000 // 转换为mJ
+		case GPU_PCIE_TX_BYTES:
+			kb, _ := g.GetPcieThroughput(nvml.PCIE_UTIL_TX_BYTES)
+			gpuStat.PCIETXBytes = kb * 1024 // KB/s 转换为bytes per second
+		case GPU_PCIE_RX_BYTES:
+			kb, _ := g.GetPcieThroughput(nvml.PCIE_UTIL_RX_BYTES)
+			gpuStat.PCIERXBytes = kb * 1024 // KB/s 转换为bytes per second
+		case GPU_UTILIZATION:
+			gpuStat.GPUUtil = utilizationRates.Gpu
+		case GPU_MEM_COPY_UTILIZATION:
+			gpuStat.MemCopyUtil = utilizationRates.Memory
+		case GPU_ENC_UTILIZATION:
+			gpuStat.EncoderUtil, _, _ = g.GetEncoderUtilization()
+		case GPU_DEC_UTILIZATION:
+			gpuStat.DecoderUtil, _, _ = g.GetEncoderUtilization()
+		case GPU_MEMORY_FREE:
+			gpuStat.MemoryFree = memoryInfo.Free
+		case GPU_MEMORY_USED:
+			gpuStat.MemoryUsed = memoryInfo.Used
 
+		}
+	}
+	return gpuStat
 }
 
 func (g *GPUDevice) GetProcessStat(useSlurm bool) []ProcessStat {
@@ -246,9 +242,36 @@ func (ps *ProcessStat) GetValueFromMetricName(metricName string) float64 {
 }
 
 func (gpu *GPUStat) GetValueFromMetricName(metricName string) float64 {
-	// todo: add value conversion from consts.go metricName
+	// [x]: add value conversion from consts.go metricName
 	switch metricName {
-
+	case GPU_SM_CLOCK:
+		return float64(gpu.SMClock)
+	case GPU_MEMORY_CLOCK:
+		return float64(gpu.MemClock)
+	case GPU_TEMPERATURE:
+		return float64(gpu.Temperature)
+	case GPU_FAN_SPEED:
+		return float64(gpu.FanSpeed)
+	case GPU_POWER_USAGE:
+		return float64(gpu.PowerUsage)
+	case GPU_TOTAL_ENERGY_CONSUMPTION:
+		return float64(gpu.TotalEnergyConsumption)
+	case GPU_PCIE_TX_BYTES:
+		return float64(gpu.PCIETXBytes)
+	case GPU_PCIE_RX_BYTES:
+		return float64(gpu.PCIERXBytes)
+	case GPU_UTILIZATION:
+		return float64(gpu.GPUUtil)
+	case GPU_MEM_COPY_UTILIZATION:
+		return float64(gpu.MemCopyUtil)
+	case GPU_ENC_UTILIZATION:
+		return float64(gpu.EncoderUtil)
+	case GPU_DEC_UTILIZATION:
+		return float64(gpu.DecoderUtil)
+	case GPU_MEMORY_FREE:
+		return float64(gpu.MemoryFree)
+	case GPU_MEMORY_USED:
+		return float64(gpu.MemoryUsed)
 	default:
 		return 0
 	}

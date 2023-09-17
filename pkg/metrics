@@ -67,12 +67,3 @@ type ProcessMetric struct {
 
 	Labels map[string]string
 }
-
-var (
-	GPULabels = []string{LabelGPU, LabelUUID, LabelDevice, LabelModelName, LabelHostName}
-)
-
-
-var (
-	
-)
