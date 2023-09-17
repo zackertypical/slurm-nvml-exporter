@@ -18,9 +18,7 @@ const (
 )
 
 type Config struct {
-	CollectorsFile   string
-	ExporterPort     string
-	ServerPort       string
+	ServerPort     string
 	CollectInterval  int
 	UseSlurm         bool
 	SupportedMetrics []string

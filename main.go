@@ -2,12 +2,17 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/gorilla/mux"
 	"github.com/nvml-exporter/pkg/collector"
+	"github.com/nvml-exporter/pkg/debug"
+	"gopkg.in/yaml.v2"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -15,8 +20,7 @@ import (
 )
 
 var (
-	exporter_port    = flag.String("exporter-port", ":9445", "exporter port")
-	server_port      = flag.String("server-port", ":9446", "Address to listen on for web interface and telemetry.")
+	server_port      = flag.String("server-port", ":9445", "Address to listen on for web interface and telemetry.")
 	metricConfigFile = flag.String("metric-config-file", "", "metric to export file")
 	collectInterval  = flag.Int("collect-interval", 5, "interval to collect metrics")
 	useSlurm         = flag.Bool("use-slurm", false, "use slurm to get process info")
@@ -35,13 +39,20 @@ func main() {
 
 	// setup config
 	config := &collector.Config{
-		CollectorsFile:  *metricConfigFile,
-		ExporterPort:    *exporter_port,
 		ServerPort:      *server_port,
 		CollectInterval: *collectInterval,
 		UseSlurm:        *useSlurm,
 		// SupportedMetrics []string,
 		HostName: hostname,
+	}
+	if *metricConfigFile != "" {
+		metrics, err := parseMetricsConfig(*metricConfigFile)
+		if err != nil {
+			logrus.Fatalf("Failed to init config file, %v", err)
+			os.Exit(1)
+		} else {
+			config.SupportedMetrics = metrics
+		}
 	}
 	// setup signals
 	stop := make(chan interface{})
@@ -56,6 +67,17 @@ func main() {
 
 	go nvmlCache.Run(stop)
 
+	go func() {
+		for {
+			select {
+			case sig := <-sigs:
+				close(stop)
+				logrus.Infof("Receive sig: %v, Shutting down exporter...", sig)
+				return
+			}
+		}
+	}()
+
 	// setup collectors
 	procCollector := collector.NewProcessCollector(config, nvmlCache)
 	gpuCollector := collector.NewGPUCollector(config, nvmlCache)
@@ -65,16 +87,13 @@ func main() {
 	registry.MustRegister(procCollector, gpuCollector)
 
 	// start listening exporter server
-	// todo: stop chan and server
-	logrus.Fatalf("ListenAndServe error: %v", http.ListenAndServe(*exporter_port, promhttp.HandlerFor(registry, promhttp.HandlerOpts{})))
+	r := mux.NewRouter()
+	r.Handle("/metrics", promhttp.HandlerFor(registry, promhttp.HandlerOpts{}))
+	r.Handle("/debug", debug.HandlerFor(nvmlCache))
 
-	for {
-		select {
-		case sig := <-sigs:
-			close(stop)
-			logrus.Infof("Receive sig: %v, Shutting down exporter...", sig)
-		}
-	}
+	logrus.Infof("ListenAndServe on port %v", *server_port)
+	logrus.Fatalf("ListenAndServe error: %v", http.ListenAndServe(*server_port, nil))
+	<-stop
 }
 
 func newOSWatcher(sigs ...os.Signal) chan os.Signal {
@@ -82,4 +101,31 @@ func newOSWatcher(sigs ...os.Signal) chan os.Signal {
 	signal.Notify(sigChan, sigs...)
 
 	return sigChan
+}
+
+func parseMetricsConfig(filePath string) ([]string, error) {
+	// 读取配置文件内容
+	configData, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("cannot read config file, err: %v", err)
+	}
+
+	// 解析配置文件
+	var config struct {
+		MetricName []string `yaml:"metricName"`
+	}
+	err = yaml.Unmarshal(configData, &config)
+	if err != nil {
+		return nil, fmt.Errorf("parse config file failed：%v", err)
+	}
+	// check metric name in METRIC_META_MAP
+	metrics := make([]string, 0)
+	for _, name := range config.MetricName {
+		if _, ok := collector.METRIC_META_MAP[name]; !ok {
+			logrus.Errorf("metric name: %v, not supported!", name)
+		} else {
+			metrics = append(metrics, name)
+		}
+	}
+	return metrics, nil
 }
