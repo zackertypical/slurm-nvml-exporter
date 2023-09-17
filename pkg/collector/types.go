@@ -255,6 +255,8 @@ func (ps *ProcessStat) GetValueFromMetricName(metricName string) float64 {
 		return float64(ps.CPUPercent)
 	case PROCESS_CPU_MEM_USED_BYTES:
 		return float64(ps.CPUMemoryUsedBytes)
+	case PROCESS_NUM_THREADS:
+		return float64(ps.NumThreads)
 	case PROCESS_GPU_SM_UTIL:
 		return float64(ps.Smutil)
 	case PROCESS_GPU_MEM_UTIL:
