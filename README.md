@@ -2,11 +2,13 @@ Slurm NVML GPU Prometheus Exporter
 ------------------------------
 
 This is a [Prometheus Exporter](https://prometheus.io/docs/instrumenting/exporters/) for
-exporting NVIDIA GPU metrics. It uses the [Go bindings](https://github.com/mindprince/gonvml)
+exporting NVIDIA GPU metrics. It uses the [go-nvml](github.com/NVIDIA/go-nvml)
 for [NVIDIA Management Library](https://developer.nvidia.com/nvidia-management-library-nvml)
 (NVML) which is a C-based API that can be used for monitoring NVIDIA GPU devices.
 Unlike some other similar exporters, it does not call the
 [`nvidia-smi`](https://developer.nvidia.com/nvidia-system-management-interface) binary.
+
+**It also supports Slurm Job information and Process information export.**
 
 ## Building
 
@@ -14,7 +16,8 @@ The repository includes `nvml.h`, so there are no special requirements from the
 build environment. `go get` should be able to build the exporter binary.
 
 ```
-go get github.com/mindprince/nvidia_gpu_prometheus_exporter
+go mod tidy
+./build.sh
 ```
 
 ## Running
@@ -28,7 +31,24 @@ to the search path for shared libraries. Or set `LD_LIBRARY_PATH` to point to
 their location.
 
 By default the metrics are exposed on port `9445`. This can be updated using
-the `-web.listen-address` flag.
+the `-server-port` flag.
+
+```
+Usage of ./nvml-exporter:
+  -collect-interval int
+    	interval to collect metrics (default 5)
+  -metric-config-file string
+    	metric to export file
+  -server-port string
+    	Address to listen on for web interface and telemetry. (default ":9445")
+  -use-slurm
+    	use slurm to get process info
+```
+
+example:
+```bash 
+./nvml-exporter -use-slurm -metric-config-file metric.yaml
+```
 
 ## Running inside a container
 
@@ -52,29 +72,7 @@ If you don't want to do the above, you can run it using nvidia-docker.
 
 ## Running using [nvidia-docker](https://github.com/NVIDIA/nvidia-docker)
 
-```
-nvidia-docker run -p 9445:9445 -ti mindprince/nvidia_gpu_prometheus_exporter:0.1
-```
-
-## usage 
-
-```
-Usage of ./nvml-exporter:
-  -collect-interval int
-    	interval to collect metrics (default 5)
-  -metric-config-file string
-    	metric to export file
-  -server-port string
-    	Address to listen on for web interface and telemetry. (default ":9445")
-  -use-slurm
-    	use slurm to get process info
-```
-
-example:
-```bash 
-./nvml-exporter -use-slurm -metric-config-file metric.yaml
-```
-
+[] todo
 
 ## How to Add Customize Metric
 
