@@ -49,8 +49,8 @@ const (
 	GPU_DEC_UTILIZATION      = "gpu_dec_utilization"      // gauge, Decoder utilization (in %).
 
 	// Memory usage
-	GPU_MEMORY_FREE = "gpu_memory_free" // gauge, Framebuffer memory free (in MiB).
-	GPU_MEMORY_USED = "gpu_memory_used" // gauge, Framebuffer memory used (in MiB).
+	GPU_MEMORY_FREE_BYTES = "gpu_memory_free_bytes"
+	GPU_MEMORY_USED_BYTES = "gpu_memory_used_bytes"
 
 	// Process
 	PROCESS_CPU_PERCENT        = "process_cpu_precent"
@@ -60,6 +60,7 @@ const (
 	PROCESS_GPU_MEM_UTIL       = "process_gpu_mem_util"
 	PROCESS_GPU_DECODE_UTIL    = "process_gpu_decode_util"
 	PROCESS_GPU_ENCODE_UTIL    = "process_gpu_encode_util"
+	PROCESS_GPU_MEM_USED_BYTES = "process_gpu_mem_used_bytes"
 
 	// PROCESS_GPU_FRAME_MEM_UTIL = "process_gpu_frame_mem_util"
 	// PROCESS_GPU_MEM_USED       = "process_gpu_mem_used"
@@ -74,20 +75,21 @@ var (
 		GPU_FAN_SPEED:                {GPU_FAN_SPEED, prometheus.GaugeValue, "Fan speed (in %)."},
 		GPU_POWER_USAGE:              {GPU_POWER_USAGE, prometheus.GaugeValue, "Power draw (in W)."},
 		GPU_TOTAL_ENERGY_CONSUMPTION: {GPU_TOTAL_ENERGY_CONSUMPTION, prometheus.CounterValue, "Total energy consumption since boot (in mJ)."},
-		GPU_PCIE_TX_BYTES:            {GPU_PCIE_TX_BYTES, prometheus.GaugeValue, "Total number of bytes transmitted through PCIe TX (in KB) via NVML."},
-		GPU_PCIE_RX_BYTES:            {GPU_PCIE_RX_BYTES, prometheus.GaugeValue, "Total number of bytes received through PCIe RX (in KB) via NVML."},
+		GPU_PCIE_TX_BYTES:            {GPU_PCIE_TX_BYTES, prometheus.GaugeValue, "Total number of bytes transmitted through PCIe TX via NVML."},
+		GPU_PCIE_RX_BYTES:            {GPU_PCIE_RX_BYTES, prometheus.GaugeValue, "Total number of bytes received through PCIe RX via NVML."},
 		GPU_UTILIZATION:              {GPU_UTILIZATION, prometheus.GaugeValue, "GPU utilization (in %)."},
 		GPU_MEM_COPY_UTILIZATION:     {GPU_MEM_COPY_UTILIZATION, prometheus.GaugeValue, "Memory utilization (in %)."},
 		GPU_ENC_UTILIZATION:          {GPU_ENC_UTILIZATION, prometheus.GaugeValue, "Encoder utilization (in %)."},
 		GPU_DEC_UTILIZATION:          {GPU_DEC_UTILIZATION, prometheus.GaugeValue, "Decoder utilization (in %)."},
-		GPU_MEMORY_FREE:              {GPU_MEMORY_FREE, prometheus.GaugeValue, "Framebuffer memory free (in MiB)."},
-		GPU_MEMORY_USED:              {GPU_MEMORY_USED, prometheus.GaugeValue, "Framebuffer memory used (in MiB)."},
+		GPU_MEMORY_FREE_BYTES:        {GPU_MEMORY_FREE_BYTES, prometheus.GaugeValue, "Framebuffer memory free bytes."},
+		GPU_MEMORY_USED_BYTES:        {GPU_MEMORY_USED_BYTES, prometheus.GaugeValue, "Framebuffer memory used bytes."},
 		PROCESS_CPU_PERCENT:          {PROCESS_CPU_PERCENT, prometheus.GaugeValue, "Process CPU percent."},
 		PROCESS_CPU_MEM_USED_BYTES:   {PROCESS_CPU_MEM_USED_BYTES, prometheus.GaugeValue, "Process CPU memory used bytes."},
 		PROCESS_NUM_THREADS:          {PROCESS_NUM_THREADS, prometheus.GaugeValue, "Process num threads."},
-		PROCESS_GPU_SM_UTIL:          {PROCESS_GPU_SM_UTIL, prometheus.GaugeValue, "Process GPU SM util."},
-		PROCESS_GPU_MEM_UTIL:         {PROCESS_GPU_MEM_UTIL, prometheus.GaugeValue, "Process GPU memory util."},
-		PROCESS_GPU_DECODE_UTIL:      {PROCESS_GPU_DECODE_UTIL, prometheus.GaugeValue, "Process GPU decode util."},
-		PROCESS_GPU_ENCODE_UTIL:      {PROCESS_GPU_ENCODE_UTIL, prometheus.GaugeValue, "Process GPU encode util."},
+		PROCESS_GPU_SM_UTIL:          {PROCESS_GPU_SM_UTIL, prometheus.GaugeValue, "Process GPU SM util (in %)."},
+		PROCESS_GPU_MEM_UTIL:         {PROCESS_GPU_MEM_UTIL, prometheus.GaugeValue, "Process GPU memory util (in %)."},
+		PROCESS_GPU_DECODE_UTIL:      {PROCESS_GPU_DECODE_UTIL, prometheus.GaugeValue, "Process GPU decode util (in %)."},
+		PROCESS_GPU_ENCODE_UTIL:      {PROCESS_GPU_ENCODE_UTIL, prometheus.GaugeValue, "Process GPU encode util (in %)."},
+		PROCESS_GPU_MEM_USED_BYTES:   {PROCESS_GPU_MEM_USED_BYTES, prometheus.GaugeValue, "Process GPU memory used bytes."},
 	}
 )

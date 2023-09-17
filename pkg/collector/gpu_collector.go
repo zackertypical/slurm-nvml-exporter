@@ -10,7 +10,7 @@ var (
 	GPULabels             = []string{"gpu", "UUID", "modelName"}
 	getGPUStatLabelValues = func(gpu GPUStat) []string {
 		return []string{
-			fmt.Sprint("%d", gpu.GPUIndex),
+			fmt.Sprintf("%d", gpu.GPUIndex),
 			gpu.UUID,
 			gpu.GPUModelName,
 		}
@@ -37,8 +37,8 @@ var (
 		GPU_DEC_UTILIZATION,
 
 		// Memory usage
-		GPU_MEMORY_FREE,
-		GPU_MEMORY_USED,
+		GPU_MEMORY_FREE_BYTES,
+		GPU_MEMORY_USED_BYTES,
 	}
 )
 

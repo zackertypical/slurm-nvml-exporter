@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -8,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/nvml-exporter/pkg/collector"
@@ -24,11 +26,16 @@ var (
 	metricConfigFile = flag.String("metric-config-file", "", "metric to export file")
 	collectInterval  = flag.Int("collect-interval", 5, "interval to collect metrics")
 	useSlurm         = flag.Bool("use-slurm", false, "use slurm to get process info")
+	debugLog         = flag.Bool("debug", false, "debug log level")
 )
 
 // todo: helper
 func main() {
 	flag.Parse()
+
+	if *debugLog {
+		logrus.SetLevel(logrus.DebugLevel)
+	}
 
 	// hostName
 	hostname, err := os.Hostname()
@@ -89,11 +96,27 @@ func main() {
 	// start listening exporter server
 	r := mux.NewRouter()
 	r.Handle("/metrics", promhttp.HandlerFor(registry, promhttp.HandlerOpts{}))
-	r.Handle("/debug", debug.HandlerFor(nvmlCache))
+	r.PathPrefix("/debug").Handler(debug.HandlerFor(nvmlCache))
+	// r.Handle("/debug", debug.HandlerFor(nvmlCache))
+	server := &http.Server{
+		Addr:    *server_port,
+		Handler: r,
+	}
+	go func() {
+		logrus.Infof("ListenAndServe on port %v", *server_port)
+		if err := server.ListenAndServe(); err != http.ErrServerClosed {
+			logrus.Fatalf("ListenAndServe error: %v", err)
+		}
+	}()
 
-	logrus.Infof("ListenAndServe on port %v", *server_port)
-	logrus.Fatalf("ListenAndServe error: %v", http.ListenAndServe(*server_port, nil))
 	<-stop
+	// Shut down the server gracefully
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		logrus.Errorf("Server shutdown error: %v", err)
+	}
 }
 
 func newOSWatcher(sigs ...os.Signal) chan os.Signal {

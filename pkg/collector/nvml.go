@@ -62,9 +62,20 @@ func NewNVMLCache(config *Config) (*NVMLCache, error) {
 		deviceInfos[i].Device = device
 		deviceInfos[i].UUID, _ = device.GetUUID()
 		deviceInfos[i].GPUIndex = uint(i)
+		deviceInfos[i].GPUModelName, _ = device.GetName()
 		deviceInfos[i].Attributes, _ = device.GetAttributes()
-		// device.GetProcessUtilization()
-		// device.GetComputeRunningProcesses()
+		// deviceInfos[i].Attributes = DeviceAttributes{
+		// 	MultiprocessorCount:       attr.MultiprocessorCount,
+		// 	SharedCopyEngineCount:     attr.SharedCopyEngineCount,
+		// 	SharedDecoderCount:        attr.SharedDecoderCount,
+		// 	SharedEncoderCount:        attr.SharedEncoderCount,
+		// 	SharedJpegCount:           attr.SharedJpegCount,
+		// 	SharedOfaCount:            attr.SharedOfaCount,
+		// 	GpuInstanceSliceCount:     attr.GpuInstanceSliceCount,
+		// 	ComputeInstanceSliceCount: attr.ComputeInstanceSliceCount,
+		// 	MemorySizeMB:              attr.MemorySizeMB,
+		// }
+		deviceInfos[i].PcieLinkMaxSpeed, _ = device.GetPcieLinkMaxSpeed()
 	}
 
 	cache := &NVMLCache{
@@ -80,16 +91,18 @@ func NewNVMLCache(config *Config) (*NVMLCache, error) {
 }
 
 func (c *NVMLCache) Run(stop chan interface{}) {
-	t := time.NewTicker(time.Millisecond * time.Duration(c.config.CollectInterval))
+	t := time.NewTicker(time.Second * time.Duration(c.config.CollectInterval))
 	defer nvml.Shutdown()
 	defer t.Stop()
-
+	c.udpateCache()
 	for {
 		select {
 		case <-stop:
+			logrus.Infof("Shutdown nvml cache...")
 			return
 		case <-t.C:
 			err := c.udpateCache()
+			// logrus.Infof("Updating nvml cache...")
 			if err != nil {
 				logrus.Errorf("Failed to collect metrics with error: %v", err)
 				/* flush output rather than output stale data */
@@ -105,14 +118,49 @@ func (c *NVMLCache) udpateCache() error {
 	newProcStat := make(map[uint]ProcessStat)
 	newGPUStat := make([]GPUStat, c.DeviceCount)
 	for i, devcie := range c.DeviceInfos {
+		// fixme: pcie带宽获取速度很慢
 		// 更新GPUStat
-		newGPUStat[i] = devcie.DeviceGetGPUStat(c.config.SupportedMetrics)
+		// s := time.Now()
+		newGPUStat[i] = devcie.DeviceGetGPUStat(SupportedGGPUMetricsName)
+		// logrus.Infof("get gpu stat time: %v", time.Since(s))
 		// 更新ProcStat
+		// s = time.Now()
 		psStats := devcie.GetProcessStat(c.config.UseSlurm)
 		for _, ps := range psStats {
 			newProcStat[uint(ps.Pid)] = ps
 		}
+		// logrus.Infof("get proc stat time: %v", time.Since(s))
 	}
+	// var wg sync.WaitGroup
+	// gpuStatCh := make(chan GPUStat)
+	// procStatCh := make(chan map[uint]ProcessStat)
+
+	// for i, device := range c.DeviceInfos {
+	// 	wg.Add(1)
+	// 	go func(i int, device GPUDevice) {
+	// 		defer wg.Done()
+
+	// 		// 更新 GPUStat
+	// 		newGPUStat[i] = device.DeviceGetGPUStat(SupportedGGPUMetricsName)
+
+	// 		// 更新 ProcStat
+	// 		psStats := device.GetProcessStat(c.config.UseSlurm)
+	// 		procStatCh <- psStats
+	// 	}(i, device)
+	// }
+
+	// go func() {
+	// 	wg.Wait()
+	// 	close(gpuStatCh)
+	// 	close(procStatCh)
+	// }()
+
+	// // 从通道接收并处理 ProcStat
+	// for psStats := range procStatCh {
+	// 	for _, ps := range psStats {
+	// 		newProcStat[uint(ps.Pid)] = ps
+	// 	}
+	// }
 
 	c.Lock()
 	c.GPUStats = newGPUStat

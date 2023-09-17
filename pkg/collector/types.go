@@ -18,7 +18,7 @@ const (
 )
 
 type Config struct {
-	ServerPort     string
+	ServerPort       string
 	CollectInterval  int
 	UseSlurm         bool
 	SupportedMetrics []string
@@ -40,6 +40,18 @@ type GPUInfo struct {
 	PcieLinkMaxSpeed uint32                `json:"pcieLinkMaxSpeed"`
 }
 
+// type DeviceAttributes struct {
+// 	MultiprocessorCount       uint32 `json:"multiprocessorCount"`
+// 	SharedCopyEngineCount     uint32 `json:"sharedCopyEngineCount"`
+// 	SharedDecoderCount        uint32 `json:"sharedDecoderCount"`
+// 	SharedEncoderCount        uint32 `json:"sharedEncoderCount"`
+// 	SharedJpegCount           uint32 `json:"sharedJpegCount"`
+// 	SharedOfaCount            uint32 `json:"sharedOfaCount"`
+// 	GpuInstanceSliceCount     uint32 `json:"gpuInstanceSliceCount"`
+// 	ComputeInstanceSliceCount uint32 `json:"computeInstanceSliceCount"`
+// 	MemorySizeMB              uint64 `json:"memorySizeMB"`
+// }
+
 type ProcessStat struct {
 	Pid      uint32 `json:"pid"`
 	GPUIndex int    `json:"gpu"`
@@ -52,26 +64,15 @@ type ProcessStat struct {
 	NumThreads         int32   `json:"num_threads"`
 
 	// GPU Metrics
-	Smutil  uint32 `json:"smutil"`  // SM利用率
-	Memutil uint32 `json:"memutil"` // 显存利用率
-	Decutil uint32 `json:"decutil"`
-	Encutil uint32 `json:"encutil"`
+	Smutil             uint32 `json:"smutil"`  // SM利用率
+	Memutil            uint32 `json:"memutil"` // 显存利用率
+	Decutil            uint32 `json:"decutil"`
+	Encutil            uint32 `json:"encutil"`
+	GPUUsedMemoryBytes uint64 `json:"gpu_used_memory_bytes"`
 
 	// Slurm Lables
 	SlurmProcInfo
 }
-
-// type DeviceAttributes struct {
-// 	MultiprocessorCount       uint32
-// 	SharedCopyEngineCount     uint32
-// 	SharedDecoderCount        uint32
-// 	SharedEncoderCount        uint32
-// 	SharedJpegCount           uint32
-// 	SharedOfaCount            uint32
-// 	GpuInstanceSliceCount     uint32
-// 	ComputeInstanceSliceCount uint32
-// 	MemorySizeMB              uint64
-// }
 
 type GPUStat struct {
 	GPUIndex     uint
@@ -99,9 +100,9 @@ type GPUStat struct {
 	// DCGM_FI_PROF_GR_ENGINE_ACTIVE,   gauge, Ratio of time the graphics engine is active (in %).
 	// DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL,            counter, Total number of NVLink bandwidth counters for all lanes.
 
-	MemoryUtil uint32 `json:"mem_util"`
-	MemoryFree uint64 `json:"mem_free"`
-	MemoryUsed uint64 `json:"mem_used"`
+	// MemoryUtil uint32 `json:"mem_util"`
+	MemoryFreeBytes uint64 `json:"mem_free_bytes"`
+	MemoryUsedBytes uint64 `json:"mem_used_bytes"`
 }
 
 // [x]: configuration
@@ -112,7 +113,10 @@ func (g *GPUDevice) DeviceGetGPUStat(metrics []string) GPUStat {
 		UUID:         g.UUID,
 		GPUModelName: g.GPUModelName,
 	}
-	utilizationRates, _ := g.GetUtilizationRates()
+	utilizationRates, ret := g.GetUtilizationRates()
+	if ret != nvml.SUCCESS {
+		logrus.Errorf("cannot get utilizationRates of gpu:%v", g.GPUIndex)
+	}
 	memoryInfo, _ := g.GetMemoryInfo()
 	for _, metric := range metrics {
 		if !ISGPUMetricName(metric) {
@@ -145,33 +149,59 @@ func (g *GPUDevice) DeviceGetGPUStat(metrics []string) GPUStat {
 			gpuStat.EncoderUtil, _, _ = g.GetEncoderUtilization()
 		case GPU_DEC_UTILIZATION:
 			gpuStat.DecoderUtil, _, _ = g.GetEncoderUtilization()
-		case GPU_MEMORY_FREE:
-			gpuStat.MemoryFree = memoryInfo.Free
-		case GPU_MEMORY_USED:
-			gpuStat.MemoryUsed = memoryInfo.Used
+		case GPU_MEMORY_FREE_BYTES:
+			gpuStat.MemoryFreeBytes = memoryInfo.Free
+		case GPU_MEMORY_USED_BYTES:
+			gpuStat.MemoryUsedBytes = memoryInfo.Used
 
 		}
 	}
 	return gpuStat
 }
 
-func (g *GPUDevice) GetProcessStat(useSlurm bool) []ProcessStat {
-	psInfos, _ := g.GetProcessUtilization(0)
-	ret := make([]ProcessStat, 0)
-	for _, psInfo := range psInfos {
-		// gpu related
+func (g *GPUDevice) GetProcessStat(useSlurm bool) map[uint]ProcessStat {
+
+	retMap := make(map[uint]ProcessStat)
+	computeProcs, ret := g.GetComputeRunningProcesses()
+	if ret != nvml.SUCCESS {
+		return retMap
+	}
+	// fixme: process infos 不全？？
+	utilProcs, ret := g.GetProcessUtilization(0)
+	// logrus.Infof("gpu:%d, psInfos:%+v", g.GPUIndex, psInfos)
+	if ret != nvml.SUCCESS {
+		return retMap
+	}
+
+	// update gpu mem
+	for _, proc := range computeProcs {
+		if proc.Pid < 1 {
+			continue
+		}
 		ps := ProcessStat{
-			Pid:      psInfo.Pid,
-			GPUIndex: int(g.GPUIndex),
-			Smutil:   psInfo.SmUtil,
-			Memutil:  psInfo.MemUtil,
-			Decutil:  psInfo.DecUtil,
-			Encutil:  psInfo.EncUtil,
+			Pid:                proc.Pid,
+			GPUIndex:           int(g.GPUIndex),
+			GPUUsedMemoryBytes: proc.UsedGpuMemory,
 		}
 		ps.UpdateProcessInfoCPU(useSlurm)
-		ret = append(ret, ps)
+		retMap[uint(proc.Pid)] = ps
+		// logrus.Infof("gpu:%d, psInfo:%+v", g.GPUIndex, ps)
 	}
-	return ret
+
+	// update util
+	for _, proc := range utilProcs {
+		if proc.Pid < 1 {
+			continue
+		}
+		logrus.Debugf("gpu:%d, psInfo:%+v", g.GPUIndex, proc)
+		if p, ok := retMap[uint(proc.Pid)]; ok {
+			p.Smutil = proc.SmUtil
+			p.Memutil = proc.MemUtil
+			p.Decutil = proc.DecUtil
+			p.Encutil = proc.EncUtil
+		}
+	}
+	return retMap
 }
 
 func (ps *ProcessStat) UpdateProcessInfoCPU(useSlurm bool) {
@@ -199,6 +229,9 @@ func (ps *ProcessStat) UpdateProcessInfoCPU(useSlurm bool) {
 		envs, _ := proc.Environ()
 		for _, env := range envs {
 			kvPair := strings.Split(env, "=")
+			if len(kvPair) != 2 {
+				continue
+			}
 			key, value := kvPair[0], kvPair[1]
 			switch key {
 			case SLURM_ENV_JOBID:
@@ -230,6 +263,8 @@ func (ps *ProcessStat) GetValueFromMetricName(metricName string) float64 {
 		return float64(ps.Decutil)
 	case PROCESS_GPU_ENCODE_UTIL:
 		return float64(ps.Encutil)
+	case PROCESS_GPU_MEM_USED_BYTES:
+		return float64(ps.GPUUsedMemoryBytes)
 	default:
 		return 0
 	}
@@ -262,10 +297,10 @@ func (gpu *GPUStat) GetValueFromMetricName(metricName string) float64 {
 		return float64(gpu.EncoderUtil)
 	case GPU_DEC_UTILIZATION:
 		return float64(gpu.DecoderUtil)
-	case GPU_MEMORY_FREE:
-		return float64(gpu.MemoryFree)
-	case GPU_MEMORY_USED:
-		return float64(gpu.MemoryUsed)
+	case GPU_MEMORY_FREE_BYTES:
+		return float64(gpu.MemoryFreeBytes)
+	case GPU_MEMORY_USED_BYTES:
+		return float64(gpu.MemoryUsedBytes)
 	default:
 		return 0
 	}

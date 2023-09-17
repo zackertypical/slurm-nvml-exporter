@@ -56,6 +56,26 @@ If you don't want to do the above, you can run it using nvidia-docker.
 nvidia-docker run -p 9445:9445 -ti mindprince/nvidia_gpu_prometheus_exporter:0.1
 ```
 
+## usage 
+
+```
+Usage of ./nvml-exporter:
+  -collect-interval int
+    	interval to collect metrics (default 5)
+  -metric-config-file string
+    	metric to export file
+  -server-port string
+    	Address to listen on for web interface and telemetry. (default ":9445")
+  -use-slurm
+    	use slurm to get process info
+```
+
+example:
+```bash 
+./nvml-exporter -use-slurm -metric-config-file metric.yaml
+```
+
+
 ## How to Add Customize Metric
 
 GPU Related Metric for example:
