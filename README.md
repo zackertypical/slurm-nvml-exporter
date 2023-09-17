@@ -16,8 +16,7 @@ The repository includes `nvml.h`, so there are no special requirements from the
 build environment. `go get` should be able to build the exporter binary.
 
 ```
-go mod tidy
-./build.sh
+make build
 ```
 
 ## Running
@@ -47,7 +46,17 @@ Usage of ./nvml-exporter:
 
 example:
 ```bash 
-./nvml-exporter -use-slurm -metric-config-file metric.yaml
+./bin/nvml-exporter -use-slurm -metric-config-file metric.yaml
+```
+
+
+## Install systemd
+
+* [service_file](./nvml-exporter.service)
+* [metric_file](./metric.yaml)
+
+```bash
+make systemd_install
 ```
 
 ## Running inside a container

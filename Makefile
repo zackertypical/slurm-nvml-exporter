@@ -1,11 +1,20 @@
-PKG=github.com/mindprince/nvidia_gpu_prometheus_exporter
-REGISTRY=mindprince
-IMAGE=nvidia_gpu_prometheus_exporter
+PKG=github.com/zackertypical/slurm-nvml-exporter
+REGISTRY=zackertypical
+IMAGE=slurm-nvml-exporter
 TAG=0.1
 
 .PHONY: build
 build:
-	docker run -v $(shell pwd):/go/src/$(PKG) --workdir=/go/src/$(PKG) golang:1.10 go build
+	go mod tidy
+	go build -o bin/nvml-exporter main.go
+
+systemd_install: build
+	install -m 744 -D ./bin/nvml-exporter /opt/nvml-exporter/nvml-exporter
+	install -m 644 -D ./metric.yaml /etc/nvml-exporter/metric.yaml
+	install -m 644 ./nvml-exporter.service /lib/systemd/system/nvml-exporter.service
+	systemctl daemon-reload
+	systemctl enable nvml-exporter.service
+	systemctl start nvml-exporter.service
 
 .PHONY: container
 container:
