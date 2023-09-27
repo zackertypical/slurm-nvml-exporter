@@ -222,7 +222,7 @@ func (g *GPUDevice) GetProcessStat(useSlurm bool) map[uint]ProcessStat {
 func (ps *ProcessStat) UpdateProcessInfoCPU(useSlurm bool) error {
 	proc, err := process.NewProcess(int32(ps.Pid))
 	if err != nil {
-		logrus.Errorf("unable to get process, pid:%d", ps.Pid)
+		// logrus.Errorf("unable to get process, pid:%d", ps.Pid)
 		return fmt.Errorf("unable to get process, pid:%d, err:%v", ps.Pid, err)
 	}
 	running, _ := proc.IsRunning()
