@@ -1,6 +1,8 @@
 package collector
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type SlurmProcInfo struct {
 	SlurmJobID   string `json:"slurmJobID"`
@@ -21,7 +23,7 @@ const (
 
 var (
 	SlurmProcLabels = []string{
-		"gpu", "pid", "procName", "user",
+		"gpu", "pid", "procName", "user", "status", "ppid",
 		"slurmJobID", "slurmStepID", "slurmUser", "slurmAccount", "slurmJobName",
 	}
 	getSlurmProcessStatLabelValues = func(ps ProcessStat) []string {
@@ -31,6 +33,8 @@ var (
 			fmt.Sprintf("%d", ps.Pid),
 			ps.ProcName,
 			ps.User,
+			ps.Status,
+			fmt.Sprintf("%d", ps.PPid),
 			ps.SlurmJobID,
 			ps.SlurmStepID,
 			ps.SlurmUser,

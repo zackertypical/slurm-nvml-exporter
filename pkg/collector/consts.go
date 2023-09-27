@@ -39,8 +39,12 @@ const (
 	GPU_TOTAL_ENERGY_CONSUMPTION = "gpu_total_energy_consumption" // counter, Total energy consumption since boot (in mJ).
 
 	// PCIe
-	GPU_PCIE_TX_BYTES = "gpu_pcie_tx_bytes" //  counter, Total number of bytes transmitted through PCIe TX (in KB) via NVML.
-	GPU_PCIE_RX_BYTES = "gpu_pcie_rx_bytes" //counter, Total number of bytes received through PCIe RX (in KB) via NVML.
+	GPU_PCIE_TX_BYTES = "gpu_pcie_tx_bytes" //  counter, Total number of bytes transmitted through PCIe TX via NVML.
+	GPU_PCIE_RX_BYTES = "gpu_pcie_rx_bytes" //counter, Total number of bytes received through PCIe RX via NVML.
+
+	// NvLink
+	// GPU_NVLINK_TX_BYTES = "gpu_nvlink_tx_bytes"
+	// GPU_NVLINK_RX_BYTES = "gpu_nvlink_rx_bytes"
 
 	// Utilization (the sample period varies depending on the product)
 	GPU_UTILIZATION          = "gpu_utilization"          //  gauge, GPU utilization (in %).

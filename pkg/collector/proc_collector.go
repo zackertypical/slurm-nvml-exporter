@@ -7,13 +7,15 @@ import (
 )
 
 var (
-	ProcessLabels             = []string{"gpu", "pid", "procName", "user"}
+	ProcessLabels             = []string{"gpu", "pid", "procName", "user", "status", "ppid"}
 	getProcessStatLabelValues = func(ps ProcessStat) []string {
 		return []string{
 			fmt.Sprintf("%d", ps.GPUIndex),
 			fmt.Sprintf("%d", ps.Pid),
 			ps.ProcName,
 			ps.User,
+			ps.Status,
+			fmt.Sprintf("%d", ps.PPid),
 		}
 	}
 

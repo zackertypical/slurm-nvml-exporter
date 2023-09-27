@@ -185,9 +185,7 @@ func (c *NVMLCache) GetProcessStats() map[uint]ProcessStat {
 func (c *NVMLCache) GetGPUStats() []GPUStat {
 	snapshot := make([]GPUStat, c.DeviceCount)
 	c.Lock()
-	for i, stat := range c.GPUStats {
-		snapshot[i] = stat
-	}
+	copy(snapshot, c.GPUStats)
 	c.Unlock()
 	return snapshot
 }

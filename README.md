@@ -91,3 +91,19 @@ GPU Related Metric for example:
 * Add metric to: `GPUStat` in `types.go`
 * Add get metric value to `DeviceGetGPUStat` in `types.go`
 * Add map to `GetValueFromMetricName` in `types.go`
+
+
+## todo
+
+GPU信息：
+* 显存大小
+
+GPU related metrics to add:
+* nvlink_counters: link and tx/rx bytes, use [nvmlDeviceGetNvLinkUtilizationCounter](https://docs.nvidia.com/deploy/nvml-api/group__NvLink.html#group__NvLink_1gd623d8eaf212205fd282abbeb8f8c395) 
+* sm_occupancy: The ratio of number of warps resident on an SM (in %).
+* sm_active: The ratio of cycles an SM has at least 1 warp assigned (in %).
+* dram_active: Ratio of cycles the device memory interface is active sending or receiving data (in %).
+
+Process related metrics to add:
+* nework
+* disk IO

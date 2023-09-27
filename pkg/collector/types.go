@@ -6,6 +6,7 @@
 package collector
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/NVIDIA/go-nvml/pkg/nvml"
@@ -57,11 +58,18 @@ type ProcessStat struct {
 	GPUIndex int    `json:"gpu"`
 	ProcName string `json:"procName"`
 	User     string `json:"user"`
+	Status   string `json:"status"`
+	PPid     uint32 `json:"ppid"`
 
 	// CPU Metrics
 	CPUPercent         float64 `json:"cpu_percent"`
 	CPUMemoryUsedBytes uint64  `json:"cpu_mem_used_bytes"`
 	NumThreads         int32   `json:"num_threads"`
+
+	// TODO:
+	// IOCounters
+	// NetIOCounters
+	// Status
 
 	// GPU Metrics
 	Smutil             uint32 `json:"smutil"`  // SM利用率
@@ -153,6 +161,9 @@ func (g *GPUDevice) DeviceGetGPUStat(metrics []string) GPUStat {
 			gpuStat.MemoryFreeBytes = memoryInfo.Free
 		case GPU_MEMORY_USED_BYTES:
 			gpuStat.MemoryUsedBytes = memoryInfo.Used
+			// case GPU_NVLINK_RX_BYTES:
+			// 	rxCounter, _, _ := g.GetNvLinkUtilizationCounter(0,0)
+			// 	_, txCounter, _ := g.GetNvLinkUtilizationCounter(0,1)
 
 		}
 	}
@@ -183,7 +194,10 @@ func (g *GPUDevice) GetProcessStat(useSlurm bool) map[uint]ProcessStat {
 			GPUIndex:           int(g.GPUIndex),
 			GPUUsedMemoryBytes: proc.UsedGpuMemory,
 		}
-		ps.UpdateProcessInfoCPU(useSlurm)
+		err := ps.UpdateProcessInfoCPU(useSlurm)
+		if err != nil {
+			continue
+		}
 		retMap[uint(proc.Pid)] = ps
 		// logrus.Infof("gpu:%d, psInfo:%+v", g.GPUIndex, ps)
 	}
@@ -205,13 +219,18 @@ func (g *GPUDevice) GetProcessStat(useSlurm bool) map[uint]ProcessStat {
 	return retMap
 }
 
-func (ps *ProcessStat) UpdateProcessInfoCPU(useSlurm bool) {
+func (ps *ProcessStat) UpdateProcessInfoCPU(useSlurm bool) error {
 	proc, err := process.NewProcess(int32(ps.Pid))
 	if err != nil {
 		logrus.Errorf("unable to get process, pid:%d", ps.Pid)
-		return
+		return fmt.Errorf("unable to get process, pid:%d, err:%v", ps.Pid, err)
 	}
-
+	running, _ := proc.IsRunning()
+	if !running {
+		return fmt.Errorf("process is not running, pid:%d", ps.Pid)
+	}
+	status, _ := proc.Status()
+	ppid, _ := proc.Ppid()
 	procName, _ := proc.Name()
 	userName, _ := proc.Username()
 	cpuPercent, _ := proc.CPUPercent()
@@ -219,6 +238,8 @@ func (ps *ProcessStat) UpdateProcessInfoCPU(useSlurm bool) {
 	memUsedBytes := memInfo.RSS
 	numThreads, _ := proc.NumThreads()
 
+	ps.Status = status
+	ps.PPid = uint32(ppid)
 	ps.ProcName = procName
 	ps.User = userName
 	ps.CPUPercent = cpuPercent
@@ -248,6 +269,7 @@ func (ps *ProcessStat) UpdateProcessInfoCPU(useSlurm bool) {
 			}
 		}
 	}
+	return nil
 }
 
 func (ps *ProcessStat) GetValueFromMetricName(metricName string) float64 {
