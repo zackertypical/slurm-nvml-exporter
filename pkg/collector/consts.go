@@ -57,6 +57,7 @@ const (
 	GPU_MEMORY_USED_BYTES = "gpu_memory_used_bytes"
 
 	// Process
+	PROCESS_INFO               = "process_info"
 	PROCESS_CPU_PERCENT        = "process_cpu_precent"
 	PROCESS_CPU_MEM_USED_BYTES = "process_cpu_mem_used_bytes"
 	PROCESS_NUM_THREADS        = "process_num_threads"
@@ -87,6 +88,7 @@ var (
 		GPU_DEC_UTILIZATION:          {GPU_DEC_UTILIZATION, prometheus.GaugeValue, "Decoder utilization (in %)."},
 		GPU_MEMORY_FREE_BYTES:        {GPU_MEMORY_FREE_BYTES, prometheus.GaugeValue, "Framebuffer memory free bytes."},
 		GPU_MEMORY_USED_BYTES:        {GPU_MEMORY_USED_BYTES, prometheus.GaugeValue, "Framebuffer memory used bytes."},
+		PROCESS_INFO:                 {PROCESS_INFO, prometheus.GaugeValue, "Process info."},
 		PROCESS_CPU_PERCENT:          {PROCESS_CPU_PERCENT, prometheus.GaugeValue, "Process CPU percent."},
 		PROCESS_CPU_MEM_USED_BYTES:   {PROCESS_CPU_MEM_USED_BYTES, prometheus.GaugeValue, "Process CPU memory used bytes."},
 		PROCESS_NUM_THREADS:          {PROCESS_NUM_THREADS, prometheus.GaugeValue, "Process num threads."},

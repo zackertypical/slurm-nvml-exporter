@@ -26,6 +26,11 @@ var (
 		"gpu", "pid", "procName", "user", "status", "ppid",
 		"slurmJobID", "slurmStepID", "slurmUser", "slurmAccount", "slurmJobName",
 	}
+	SlurmProcInfoLabels = []string{
+		"gpu", "pid", "procName", "user", "status", "ppid", 
+		"slurmJobID", "slurmStepID", "slurmUser", "slurmAccount", "slurmJobName", 
+		"workDir", "cmdLine",
+	}
 	getSlurmProcessStatLabelValues = func(ps ProcessStat) []string {
 		// todo: json unmarshall
 		return []string{

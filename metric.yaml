@@ -13,6 +13,7 @@ metricName:
 - gpu_dec_utilization
 - gpu_memory_free_bytes
 - gpu_memory_used_bytes
+- process_info
 - process_cpu_precent
 - process_cpu_mem_used_bytes
 - process_num_threads

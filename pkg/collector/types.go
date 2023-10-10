@@ -54,12 +54,14 @@ type GPUInfo struct {
 // }
 
 type ProcessStat struct {
-	Pid      uint32 `json:"pid"`
-	GPUIndex int    `json:"gpu"`
-	ProcName string `json:"procName"`
-	User     string `json:"user"`
-	Status   string `json:"status"`
-	PPid     uint32 `json:"ppid"`
+	Pid         uint32 `json:"pid"`
+	GPUIndex    int    `json:"gpu"`
+	ProcName    string `json:"procName"`
+	User        string `json:"user"`
+	Status      string `json:"status"`
+	PPid        uint32 `json:"ppid"`
+	WorkingDir  string `json:"workingDir"`
+	CommandLine string `json:"commandLine"`
 
 	// CPU Metrics
 	CPUPercent         float64 `json:"cpu_percent"`
@@ -229,22 +231,17 @@ func (ps *ProcessStat) UpdateProcessInfoCPU(useSlurm bool) error {
 	if !running {
 		return fmt.Errorf("process is not running, pid:%d", ps.Pid)
 	}
-	status, _ := proc.Status()
+	ps.Status, _ = proc.Status()
 	ppid, _ := proc.Ppid()
-	procName, _ := proc.Name()
-	userName, _ := proc.Username()
-	cpuPercent, _ := proc.CPUPercent()
-	memInfo, _ := proc.MemoryInfo()
-	memUsedBytes := memInfo.RSS
-	numThreads, _ := proc.NumThreads()
-
-	ps.Status = status
 	ps.PPid = uint32(ppid)
-	ps.ProcName = procName
-	ps.User = userName
-	ps.CPUPercent = cpuPercent
-	ps.CPUMemoryUsedBytes = memUsedBytes
-	ps.NumThreads = numThreads
+	ps.ProcName, _ = proc.Name()
+	ps.CommandLine, _ = proc.Cmdline()
+	ps.WorkingDir, _ = proc.Cwd()
+	ps.User, _ = proc.Username()
+	ps.CPUPercent, _ = proc.CPUPercent()
+	memInfo, _ := proc.MemoryInfo()
+	ps.CPUMemoryUsedBytes = memInfo.RSS
+	ps.NumThreads, _ = proc.NumThreads()
 
 	// slurm realted
 	if useSlurm {
@@ -274,6 +271,8 @@ func (ps *ProcessStat) UpdateProcessInfoCPU(useSlurm bool) error {
 
 func (ps *ProcessStat) GetValueFromMetricName(metricName string) float64 {
 	switch metricName {
+	case PROCESS_INFO:
+		return 1
 	case PROCESS_CPU_PERCENT:
 		return float64(ps.CPUPercent)
 	case PROCESS_CPU_MEM_USED_BYTES:

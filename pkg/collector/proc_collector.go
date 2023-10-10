@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	ProcessLabels             = []string{"gpu", "pid", "procName", "user", "status", "ppid"}
+	ProcessLabels             = []string{"gpu", "pid", "procName", "user", "status"}
+	ProcessInfoLables         = []string{"gpu", "pid", "procName", "user", "status", "ppid", "workDir", "cmdLine"}
 	getProcessStatLabelValues = func(ps ProcessStat) []string {
 		return []string{
 			fmt.Sprintf("%d", ps.GPUIndex),
@@ -20,6 +21,7 @@ var (
 	}
 
 	SupportedProcessMetricsName = []string{
+		PROCESS_INFO,
 		PROCESS_CPU_PERCENT,
 		PROCESS_CPU_MEM_USED_BYTES,
 		PROCESS_NUM_THREADS,
@@ -50,21 +52,40 @@ func NewProcessCollector(config *Config, cache *NVMLCache) *ProcessCollector {
 
 	for _, name := range SupportedProcessMetricsName {
 		if !config.UseSlurm {
-			metricsMap[name] = prometheus.NewDesc(
-				name,
-				METRIC_META_MAP[name].Help,
-				ProcessLabels,
-				prometheus.Labels{LabelHostName: config.HostName},
-			)
+			if name == PROCESS_INFO {
+				metricsMap[name] = prometheus.NewDesc(
+					name,
+					METRIC_META_MAP[name].Help,
+					ProcessLabels,
+					prometheus.Labels{LabelHostName: config.HostName},
+				)
+			} else {
+				metricsMap[name] = prometheus.NewDesc(
+					name,
+					METRIC_META_MAP[name].Help,
+					ProcessInfoLables,
+					prometheus.Labels{LabelHostName: config.HostName},
+				)
+			}
 
 		} else {
 			// slurm添加的SlurmProcLabels
-			metricsMap[name] = prometheus.NewDesc(
-				name,
-				METRIC_META_MAP[name].Help,
-				SlurmProcLabels,
-				prometheus.Labels{LabelHostName: config.HostName},
-			)
+			if name == PROCESS_INFO {
+				metricsMap[name] = prometheus.NewDesc(
+					name,
+					METRIC_META_MAP[name].Help,
+					SlurmProcInfoLabels,
+					prometheus.Labels{LabelHostName: config.HostName},
+				)
+			} else {
+				metricsMap[name] = prometheus.NewDesc(
+					name,
+					METRIC_META_MAP[name].Help,
+					SlurmProcLabels,
+					prometheus.Labels{LabelHostName: config.HostName},
+				)
+			}
+
 		}
 	}
 	psCollector := &ProcessCollector{
@@ -93,12 +114,26 @@ func (c *ProcessCollector) Collect(ch chan<- prometheus.Metric) {
 	for metricName, desc := range c.metricDescs {
 		for _, ps := range processCache {
 			value := ps.GetValueFromMetricName(metricName)
-			metric := prometheus.MustNewConstMetric(
-				desc,
-				METRIC_META_MAP[metricName].PromType,
-				value,
-				c.funcGetLabelValues(ps)...,
-			)
+			var metric prometheus.Metric
+			labelValues := c.funcGetLabelValues(ps)
+
+			if metricName == PROCESS_INFO {
+				labelValues = append(labelValues, ps.WorkingDir, ps.CommandLine)
+				metric = prometheus.MustNewConstMetric(
+					desc,
+					METRIC_META_MAP[metricName].PromType,
+					value,
+					labelValues...,
+				)
+			} else {
+				metric = prometheus.MustNewConstMetric(
+					desc,
+					METRIC_META_MAP[metricName].PromType,
+					value,
+					labelValues...,
+				)
+			}
+
 			if metric != nil {
 				ch <- metric
 			}
