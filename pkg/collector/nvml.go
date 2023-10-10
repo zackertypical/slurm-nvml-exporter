@@ -17,6 +17,7 @@
 package collector
 
 import (
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -30,7 +31,7 @@ type NVMLCache struct {
 	DeviceCount  uint
 	DeviceInfos  []GPUDevice
 	GPUStats     []GPUStat
-	ProcessStats map[uint]ProcessStat
+	ProcessStats map[string]ProcessStat
 	Hostname     string
 	config       *Config
 }
@@ -82,7 +83,7 @@ func NewNVMLCache(config *Config) (*NVMLCache, error) {
 		DeviceInfos:  deviceInfos,
 		DeviceCount:  uint(count),
 		GPUStats:     make([]GPUStat, count),
-		ProcessStats: make(map[uint]ProcessStat),
+		ProcessStats: make(map[string]ProcessStat),
 		Hostname:     config.HostName,
 		config:       config,
 	}
@@ -115,7 +116,7 @@ func (c *NVMLCache) Run(stop chan interface{}) {
 func (c *NVMLCache) udpateCache() error {
 
 	start := time.Now()
-	newProcStat := make(map[uint]ProcessStat)
+	newProcStat := make(map[string]ProcessStat)
 	newGPUStat := make([]GPUStat, c.DeviceCount)
 	for i, devcie := range c.DeviceInfos {
 		// fixme: pcie带宽获取速度很慢
@@ -127,7 +128,11 @@ func (c *NVMLCache) udpateCache() error {
 		// s = time.Now()
 		psStats := devcie.GetProcessStat(c.config.UseSlurm)
 		for _, ps := range psStats {
-			newProcStat[uint(ps.Pid)] = ps
+			pid := fmt.Sprintf("%d", ps.Pid)
+			if _, ok := newProcStat[pid]; ok {
+				pid = fmt.Sprintf("%d-%d", ps.Pid, i)
+			}
+			newProcStat[pid] = ps
 		}
 		// logrus.Infof("get proc stat time: %v", time.Since(s))
 	}
@@ -171,8 +176,8 @@ func (c *NVMLCache) udpateCache() error {
 }
 
 // get cache snapshot
-func (c *NVMLCache) GetProcessStats() map[uint]ProcessStat {
-	snapshot := make(map[uint]ProcessStat)
+func (c *NVMLCache) GetProcessStats() map[string]ProcessStat {
+	snapshot := make(map[string]ProcessStat)
 	c.Lock()
 	for pid, stat := range c.ProcessStats {
 		snapshot[pid] = stat

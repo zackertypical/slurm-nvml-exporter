@@ -56,14 +56,14 @@ func NewProcessCollector(config *Config, cache *NVMLCache) *ProcessCollector {
 				metricsMap[name] = prometheus.NewDesc(
 					name,
 					METRIC_META_MAP[name].Help,
-					ProcessLabels,
+					ProcessInfoLables,
 					prometheus.Labels{LabelHostName: config.HostName},
 				)
 			} else {
 				metricsMap[name] = prometheus.NewDesc(
 					name,
 					METRIC_META_MAP[name].Help,
-					ProcessInfoLables,
+					ProcessLabels,
 					prometheus.Labels{LabelHostName: config.HostName},
 				)
 			}
